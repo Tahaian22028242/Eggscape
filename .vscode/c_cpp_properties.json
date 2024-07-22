@@ -3,8 +3,7 @@
         {
             "name": "Win32",
             "includePath": [
-                "${workspaceFolder}/**",
-                "C:/Users/DELL/ucrt64/include"
+                "${workspaceFolder}/SDL2/include"
             ],
             "defines": [
                 "_DEBUG",
@@ -17,7 +16,6 @@
             "mergeConfigurations": false,
             "browse": {
                 "path": [
-                    "c:/Users/DELL/SDL2_GameProject/**",
                     "${workspaceFolder}/**"
                 ],
                 "limitSymbolsToIncludedHeaders": true
