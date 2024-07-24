@@ -7,7 +7,7 @@
             "args": [
                 "-fdiagnostics-color=always",
                 "-g",
-                "C:/Users/DELL/SDL2_GameProject/src/main.cpp",
+                "C:/Users/DELL/SDL2_GameProject/src/*.cpp",
                 "-IC:/Users/DELL/SDL2_GameProject/SDL2/include",
                 "-LC:/Users/DELL/SDL2_GameProject/SDL2/lib",
                 "-lmingw32",
