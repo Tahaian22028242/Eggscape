@@ -1,11 +1,11 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-#include <vector>
+#include "resourcesPath.hpp"
 
 typedef struct {
-    int x;
-    int y;
+    double x;
+    double y;
 } Vector2;
 
 class Player {
