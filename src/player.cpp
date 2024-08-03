@@ -1,12 +1,7 @@
-#include "header/player.h"
+#include "header/player.hpp"
 
-#include <math.h>
+#include <cmath>
 #include <vector>
-
-const double pi = 3.1415926535897;
-const int gravity = 1;
-const int screenWidth = 800;
-const int screenHeight = 450;
 
 Player::Player(double x, double y, int width, int height) {
     this->x = x;

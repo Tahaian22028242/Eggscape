@@ -1,4 +1,4 @@
-NAME        = Terri-fried
+NAME        = Eggscape
 
 CXX         = g++
 
@@ -7,7 +7,6 @@ SOURCES     = $(wildcard *.cpp)
 OBJ_DIR     = build/obj
 OUT_DIR     = build/bin
 OBJS        = $(patsubst %, $(OBJ_DIR)/%, $(SOURCES:.cpp=.o))
-RES_FILES   = winres/TF-icon.res
 MKDIR_P     = mkdir -p
 
 FLAGS       = -O3 -std=c++11 -mwindows

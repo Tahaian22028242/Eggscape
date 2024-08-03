@@ -1,6 +1,8 @@
 #ifndef PLATFORM_H
 #define PLATFORM_H
 
+#include "resourcesPath.hpp"
+
 class Platform {
 private:
     double x;

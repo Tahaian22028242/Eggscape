@@ -1,18 +1,18 @@
 #include <iostream>
 #include <filesystem>
-#include <math.h>
-#include <time.h>
+#include <cmath>
+#include <ctime>
+
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_mixer.h>
 #include <SDL2/SDL_ttf.h>
 
-#include "header/player.h"
-#include "header/platform.h"
+#include "header/player.hpp"
+#include "header/platform.hpp"
 
-const double pi = 3.1415926535897;
-const int gravity = 1;
+using namespace std;
 
 Platform platforms[4] = {{0}, {1}, {2}, {3}};
 Player player(platforms[0].getX() + platforms[0].getWidth()/2 - 26/2, platforms[0].getY() - player.getHeight(), 26, 32);
@@ -104,24 +104,16 @@ void checkPlayerCollision() {
 } // End of Game's base logic #1
 
 void Draw_Font(SDL_Renderer *renderer, const char *str, int x, int y, int width, int height, int size, SDL_Color color) {
-    TTF_Font* font = TTF_OpenFont("C:/Users/DELL/SDL2_GameProject/resources/font.otf", size);
+    TTF_Font* font = TTF_OpenFont(fontPath, size);
     
     SDL_Surface* message_surf = TTF_RenderText_Blended(font, str, color);
     SDL_Texture* Message = SDL_CreateTextureFromSurface(renderer, message_surf);
     SDL_Rect Message_rect = {x, y, width, height};
     SDL_RenderCopy(renderer, Message, NULL, &Message_rect);
-    if (Message == nullptr) {
-        std::cerr << "Failed to create texture: " << SDL_GetError() << std::endl;
-        return;
-    }
     
     SDL_DestroyTexture(Message);
     SDL_FreeSurface(message_surf);
     TTF_CloseFont(font);
-    if (Message == nullptr) {
-        std::cerr << "Failed to destroy texture: " << SDL_GetError() << std::endl;
-        return;
-    }
 }
 
 int main(int args, char* argv[]) {
@@ -148,7 +140,7 @@ int main(int args, char* argv[]) {
     IMG_Init(IMG_INIT_PNG);
     TTF_Init();
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0) {
-        std::cerr << "Failed to initialize: " << SDL_GetError() << std::endl;
+        cerr << "Failed to initialize: " << SDL_GetError() << endl;
         return 1;
     }
     
@@ -161,9 +153,9 @@ int main(int args, char* argv[]) {
     
     SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, 0);
     
-    SDL_Surface* egg = IMG_Load("C:/Users/DELL/SDL2_GameProject/resources/egg.png");
+    SDL_Surface* egg = IMG_Load(playerImagePath);
     if (egg == nullptr) {
-        std::cerr << "Failed to load image: " << IMG_GetError() << std::endl;
+        cerr << "Failed to load image: " << IMG_GetError() << endl;
         return 1;
     }
     SDL_SetWindowIcon(window, egg);
@@ -172,15 +164,15 @@ int main(int args, char* argv[]) {
     Mix_OpenAudio(22050, AUDIO_S16SYS, 2, 4096);
     // SetMasterVolume(0.3f);
     
-    SDL_Surface* playerSprite_surf = IMG_Load("C:/Users/DELL/SDL2_GameProject/resources/egg.png");
-    SDL_Surface* lavaSprite_surf = IMG_Load("C:/Users/DELL/SDL2_GameProject/resources/lava.png");
-    SDL_Surface* platformSprite_surf = IMG_Load("C:/Users/DELL/SDL2_GameProject/resources/platform.png");
-    SDL_Surface* coinSprite_surf = IMG_Load("C:/Users/DELL/SDL2_GameProject/resources/coin.png");
-    SDL_Surface* scoreBoxSprite_surf = IMG_Load("C:/Users/DELL/SDL2_GameProject/resources/scorebox.png");
-    SDL_Surface* logo_surf = IMG_Load("C:/Users/DELL/SDL2_GameProject/resources/logo.png");
-    SDL_Surface* splashEggSprite_surf = IMG_Load("C:/Users/DELL/SDL2_GameProject/resources/splash_egg.png");
+    SDL_Surface* playerSprite_surf = IMG_Load(playerImagePath);
+    SDL_Surface* lavaSprite_surf = IMG_Load(lavaImagePath);
+    SDL_Surface* platformSprite_surf = IMG_Load(platformImagePath);
+    SDL_Surface* coinSprite_surf = IMG_Load(coinImagePath);
+    SDL_Surface* scoreBoxSprite_surf = IMG_Load(scoreBoxImagePath);
+    SDL_Surface* logo_surf = IMG_Load(logoImagePath);
+    SDL_Surface* splashEggSprite_surf = IMG_Load(splashEggImagePath);
     if (playerSprite_surf == nullptr || lavaSprite_surf == nullptr || platformSprite_surf == nullptr || coinSprite_surf == nullptr || scoreBoxSprite_surf == nullptr || logo_surf == nullptr || splashEggSprite_surf == nullptr) {
-        std::cerr << "Failed to load image: " << IMG_GetError() << std::endl;
+        cerr << "Failed to load image: " << IMG_GetError() << endl;
         return 1;
     }
     
@@ -191,19 +183,15 @@ int main(int args, char* argv[]) {
     SDL_Texture* scoreBoxSprite = SDL_CreateTextureFromSurface(renderer, scoreBoxSprite_surf);
     SDL_Texture* logo = SDL_CreateTextureFromSurface(renderer, logo_surf);
     SDL_Texture* splashEggSprite = SDL_CreateTextureFromSurface(renderer, splashEggSprite_surf);
-    if (playerSprite == nullptr || lavaSprite == nullptr || platformSprite == nullptr || coinSprite == nullptr || scoreBoxSprite == nullptr || logo == nullptr || splashEggSprite == nullptr) {
-        std::cerr << "Failed to create texture: " << SDL_GetError() << std::endl;
-        return 1;
-    }
     
-    Mix_Chunk* fxLaunch = Mix_LoadWAV("C:/Users/DELL/SDL2_GameProject/resources/launch.wav"); 
-    Mix_Chunk* fxClick = Mix_LoadWAV("C:/Users/DELL/SDL2_GameProject/resources/click.wav"); 
-    Mix_Chunk* fxDeath = Mix_LoadWAV("C:/Users/DELL/SDL2_GameProject/resources/die.wav"); 
-    Mix_Chunk* fxCoin = Mix_LoadWAV("C:/Users/DELL/SDL2_GameProject/resources/coin.wav"); 
-    Mix_Chunk* fxSplash = Mix_LoadWAV("C:/Users/DELL/SDL2_GameProject/resources/splash.wav");
-    Mix_Chunk* fxSelect = Mix_LoadWAV("C:/Users/DELL/SDL2_GameProject/resources/select.wav");
+    Mix_Chunk* fxLaunch = Mix_LoadWAV(fxLaunchPath); 
+    Mix_Chunk* fxClick = Mix_LoadWAV(fxClickPath); 
+    Mix_Chunk* fxDeath = Mix_LoadWAV(fxDeathPath); 
+    Mix_Chunk* fxCoin = Mix_LoadWAV(fxCoinPath); 
+    Mix_Chunk* fxSplash = Mix_LoadWAV(fxSplashPath);
+    Mix_Chunk* fxSelect = Mix_LoadWAV(fxSelectPath);
     if (fxLaunch == nullptr || fxClick == nullptr || fxDeath == nullptr || fxCoin == nullptr || fxSplash == nullptr || fxSelect == nullptr) {
-        std::cerr << "Failed to load audio: " << Mix_GetError() << std::endl;
+        cerr << "Failed to load audio: " << Mix_GetError() << endl;
         return 1;
     }
     
@@ -378,10 +366,6 @@ int main(int args, char* argv[]) {
     SDL_DestroyTexture(scoreBoxSprite);
     SDL_DestroyTexture(logo);
     SDL_DestroyTexture(splashEggSprite);
-    if (playerSprite == nullptr || lavaSprite == nullptr || platformSprite == nullptr || coinSprite == nullptr || scoreBoxSprite == nullptr || logo == nullptr || splashEggSprite == nullptr) {
-        std::cerr << "Failed to destroy texture: " << SDL_GetError() << std::endl;
-        return 1;
-    }
     
     SDL_FreeSurface(playerSprite_surf);
     SDL_FreeSurface(lavaSprite_surf);
@@ -390,10 +374,6 @@ int main(int args, char* argv[]) {
     SDL_FreeSurface(scoreBoxSprite_surf);
     SDL_FreeSurface(logo_surf);
     SDL_FreeSurface(splashEggSprite_surf);
-    if (playerSprite_surf == nullptr || lavaSprite_surf == nullptr || platformSprite_surf == nullptr || coinSprite_surf == nullptr || scoreBoxSprite_surf == nullptr || logo_surf == nullptr || splashEggSprite_surf == nullptr) {
-        std::cerr << "Failed to free surface: " << SDL_GetError() << std::endl;
-        return 1;
-    }
     
     Mix_FreeChunk(fxClick);
     Mix_FreeChunk(fxLaunch);
@@ -401,19 +381,11 @@ int main(int args, char* argv[]) {
     Mix_FreeChunk(fxCoin);
     Mix_FreeChunk(fxSplash);
     Mix_FreeChunk(fxSelect);
-    if (fxClick == nullptr || fxLaunch == nullptr || fxDeath == nullptr || fxCoin == nullptr || fxSplash == nullptr || fxSelect == nullptr) {
-        std::cerr << "Failed to free audio: " << Mix_GetError() << std::endl;
-        return 1;
-    }
     
     Mix_CloseAudio();
     TTF_Quit();
     IMG_Quit();
     SDL_Quit();
-    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0) {
-        std::cerr << "Failed to quit: " << SDL_GetError() << std::endl;
-        return 1;
-    }      
    
     return 0;
 }
