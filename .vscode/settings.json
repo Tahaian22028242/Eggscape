@@ -1,6 +1,7 @@
 {
     "C_Cpp.errorSquiggles": "disabled",
     "files.associations": {
+<<<<<<< HEAD
         "string": "cpp",
         "array": "cpp",
         "atomic": "cpp",
@@ -53,5 +54,8 @@
         "streambuf": "cpp",
         "cinttypes": "cpp",
         "typeinfo": "cpp"
+=======
+        "string": "cpp"
+>>>>>>> 645291966eb5004e0fa2512a38d41fb6aa59bcbd
     }
 }
