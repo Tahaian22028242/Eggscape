@@ -1,6 +1,6 @@
 #include "header/platform.hpp"
-#include <cmath>
 
+#include <cmath>
 
 Platform::Platform(int index) {
     
@@ -8,7 +8,7 @@ Platform::Platform(int index) {
     x = rand() % 660 + 20; // 660 is the width of the screen, 20 is the offset
     y = 0 - height - (index * 100); // 100 is the distance between each platform
     
-    int coinInt = rand() % 5; // 1 in 5 chance of having a coin
+    int coinInt = rand() % 4; // 1 in 5 chance of having a coin
     
     if (coinInt == 0 || index == 0) // First platform will never have a coin
         hasCoin = false;

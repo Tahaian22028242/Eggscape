@@ -1,18 +1,15 @@
 #include <iostream>
 #include <filesystem>
 #include <cmath>
-#include <ctime>
-
-
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-#include <SDL2/SDL_mixer.h>
-#include <SDL2/SDL_ttf.h>
+#include <ctime>        
+using namespace std;
 
 #include "header/player.hpp"
 #include "header/platform.hpp"
-
-using namespace std;
+#include "header/resourcesPath.hpp"
+#include "header/init.hpp"
+#include "header/resourcesLoader.hpp"
+#include "header/cleanup.hpp"
 
 Platform platforms[4] = {{0}, {1}, {2}, {3}};
 Player player(platforms[0].getX() + platforms[0].getWidth()/2 - 26/2, platforms[0].getY() - player.getHeight(), 26, 32);
@@ -103,27 +100,18 @@ void checkPlayerCollision() {
     player.setOnPlatform(onPlatform);
 } // End of Game's base logic #1
 
-void Draw_Font(SDL_Renderer *renderer, const char *str, int x, int y, int width, int height, int size, SDL_Color color) {
-    TTF_Font* font = TTF_OpenFont(fontPath, size);
-    
-    SDL_Surface* message_surf = TTF_RenderText_Blended(font, str, color);
-    SDL_Texture* Message = SDL_CreateTextureFromSurface(renderer, message_surf);
-    SDL_Rect Message_rect = {x, y, width, height};
-    SDL_RenderCopy(renderer, Message, NULL, &Message_rect);
-    
-    SDL_DestroyTexture(Message);
-    SDL_FreeSurface(message_surf);
-    TTF_CloseFont(font);
-}
-
 int main(int args, char* argv[]) {
+    SDL_Window* window = nullptr;
+    SDL_Renderer* renderer = nullptr;
+    
+    if (!InitSDL(&window, &renderer) || !InitAudio() || !InitTTF()) {
+        return -1;
+    }
+
     srand(time(NULL));
     
     // resetScore();
     // sprintf(highscore, "BEST: %d", highscoreInt);
-    
-    const int screenWidth = 800;
-    const int screenHeight = 450;
     
     int mouseDownX = 0;
     int mouseDownY = 0;
@@ -135,61 +123,22 @@ int main(int args, char* argv[]) {
     bool firstTime = true;
     bool playedSplash = false;
     bool playedSelect = false;
-    
-    SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
-    IMG_Init(IMG_INIT_PNG);
-    TTF_Init();
-    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0) {
-        cerr << "Failed to initialize: " << SDL_GetError() << endl;
-        return 1;
-    }
-    
-    SDL_Window *window = SDL_CreateWindow(
-        "Terri-Fried",
-        SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-        screenWidth, screenHeight,
-        SDL_WINDOW_OPENGL
-    );
-    
-    SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, 0);
-    
-    SDL_Surface* egg = IMG_Load(playerImagePath);
-    if (egg == nullptr) {
-        cerr << "Failed to load image: " << IMG_GetError() << endl;
-        return 1;
-    }
-    SDL_SetWindowIcon(window, egg);
-    SDL_FreeSurface(egg);
-    
-    Mix_OpenAudio(22050, AUDIO_S16SYS, 2, 4096);
-    // SetMasterVolume(0.3f);
-    
-    SDL_Surface* playerSprite_surf = IMG_Load(playerImagePath);
-    SDL_Surface* lavaSprite_surf = IMG_Load(lavaImagePath);
-    SDL_Surface* platformSprite_surf = IMG_Load(platformImagePath);
-    SDL_Surface* coinSprite_surf = IMG_Load(coinImagePath);
-    SDL_Surface* scoreBoxSprite_surf = IMG_Load(scoreBoxImagePath);
-    SDL_Surface* logo_surf = IMG_Load(logoImagePath);
-    SDL_Surface* splashEggSprite_surf = IMG_Load(splashEggImagePath);
-    if (playerSprite_surf == nullptr || lavaSprite_surf == nullptr || platformSprite_surf == nullptr || coinSprite_surf == nullptr || scoreBoxSprite_surf == nullptr || logo_surf == nullptr || splashEggSprite_surf == nullptr) {
-        cerr << "Failed to load image: " << IMG_GetError() << endl;
-        return 1;
-    }
-    
-    SDL_Texture* playerSprite = SDL_CreateTextureFromSurface(renderer, playerSprite_surf);
-    SDL_Texture* lavaSprite = SDL_CreateTextureFromSurface(renderer, lavaSprite_surf);
-    SDL_Texture* platformSprite = SDL_CreateTextureFromSurface(renderer, platformSprite_surf);
-    SDL_Texture* coinSprite = SDL_CreateTextureFromSurface(renderer, coinSprite_surf);
-    SDL_Texture* scoreBoxSprite = SDL_CreateTextureFromSurface(renderer, scoreBoxSprite_surf);
-    SDL_Texture* logo = SDL_CreateTextureFromSurface(renderer, logo_surf);
-    SDL_Texture* splashEggSprite = SDL_CreateTextureFromSurface(renderer, splashEggSprite_surf);
-    
-    Mix_Chunk* fxLaunch = Mix_LoadWAV(fxLaunchPath); 
-    Mix_Chunk* fxClick = Mix_LoadWAV(fxClickPath); 
-    Mix_Chunk* fxDeath = Mix_LoadWAV(fxDeathPath); 
-    Mix_Chunk* fxCoin = Mix_LoadWAV(fxCoinPath); 
-    Mix_Chunk* fxSplash = Mix_LoadWAV(fxSplashPath);
-    Mix_Chunk* fxSelect = Mix_LoadWAV(fxSelectPath);
+
+    SDL_Texture* playerSprite = loadTexture(playerImagePath, renderer);
+    SDL_Texture* lavaSprite = loadTexture(lavaImagePath, renderer);
+    SDL_Texture* platformSprite = loadTexture(platformImagePath, renderer);
+    SDL_Texture* coinSprite = loadTexture(coinImagePath, renderer);
+    SDL_Texture* scoreBoxSprite = loadTexture(scoreBoxImagePath, renderer);
+    SDL_Texture* logo = loadTexture(logoImagePath, renderer);
+    SDL_Texture* splashEggSprite = loadTexture(splashEggImagePath, renderer);
+
+    Mix_Chunk* fxLaunch = LoadSound(fxLaunchPath);
+    Mix_Chunk* fxClick = LoadSound(fxClickPath);
+    Mix_Chunk* fxDeath = LoadSound(fxDeathPath);
+    Mix_Chunk* fxCoin = LoadSound(fxCoinPath);
+    Mix_Chunk* fxSplash = LoadSound(fxSplashPath);
+    Mix_Chunk* fxSelect = LoadSound(fxSelectPath);
+
     if (fxLaunch == nullptr || fxClick == nullptr || fxDeath == nullptr || fxCoin == nullptr || fxSplash == nullptr || fxSelect == nullptr) {
         cerr << "Failed to load audio: " << Mix_GetError() << endl;
         return 1;
@@ -298,7 +247,7 @@ int main(int args, char* argv[]) {
                     int velocityX = mouse_x - mouseDownX;
                     int velocityY = mouse_y - mouseDownY;
                     
-                    player.setVelocity((double)velocityX*.08, (double)velocityY*.08);
+                    player.setVelocity((double)velocityX*0.08, (double)velocityY*0.08);
                 }
             } // End of Game's base logic #3
         
@@ -359,33 +308,25 @@ int main(int args, char* argv[]) {
        
     }
 
-    SDL_DestroyTexture(playerSprite);
-    SDL_DestroyTexture(lavaSprite);
-    SDL_DestroyTexture(platformSprite);
-    SDL_DestroyTexture(coinSprite);
-    SDL_DestroyTexture(scoreBoxSprite);
-    SDL_DestroyTexture(logo);
-    SDL_DestroyTexture(splashEggSprite);
-    
-    SDL_FreeSurface(playerSprite_surf);
-    SDL_FreeSurface(lavaSprite_surf);
-    SDL_FreeSurface(platformSprite_surf);
-    SDL_FreeSurface(coinSprite_surf);
-    SDL_FreeSurface(scoreBoxSprite_surf);
-    SDL_FreeSurface(logo_surf);
-    SDL_FreeSurface(splashEggSprite_surf);
-    
-    Mix_FreeChunk(fxClick);
-    Mix_FreeChunk(fxLaunch);
-    Mix_FreeChunk(fxDeath);
-    Mix_FreeChunk(fxCoin);
-    Mix_FreeChunk(fxSplash);
-    Mix_FreeChunk(fxSelect);
-    
-    Mix_CloseAudio();
-    TTF_Quit();
-    IMG_Quit();
-    SDL_Quit();
+    // Cleanup resources
+    cleanupTexture(playerSprite);
+    cleanupTexture(lavaSprite);
+    cleanupTexture(platformSprite);
+    cleanupTexture(coinSprite);
+    cleanupTexture(scoreBoxSprite);
+    cleanupTexture(logo);
+    cleanupTexture(splashEggSprite);
+
+    cleanupSound(fxLaunch);
+    cleanupSound(fxClick);
+    cleanupSound(fxDeath);
+    cleanupSound(fxCoin);
+    cleanupSound(fxSplash);
+    cleanupSound(fxSelect);
+
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(window);
+    cleanupSystem();
    
     return 0;
 }
