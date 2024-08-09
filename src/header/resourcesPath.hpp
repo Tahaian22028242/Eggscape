@@ -1,5 +1,24 @@
-#ifndef GENERAL_VALUE_H
-#define GENERAL_VALUE_H
+#ifndef RESOURCES_PATH_HPP
+#define RESOURCES_PATH_HPP
+
+#include <iostream>
+#include <fstream>
+#include <cmath>
+#include <ctime>
+#include <vector>
+using namespace std;     
+
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
+#include <SDL2/SDL_mixer.h>
+#include <SDL2/SDL_ttf.h>
+
+#include "init.hpp"
+#include "resourcesLoader.hpp"
+#include "player.hpp"
+#include "platform.hpp"
+#include "scoreManager.hpp"
+#include "cleanup.hpp"
 
 const int screenWidth = 800;
 const int screenHeight = 450;
@@ -7,9 +26,9 @@ const int screenHeight = 450;
 const double pi = 3.1415926535897;
 const int gravity = 1;
 
-// Set the width and height of the platform
-const int width = 100;
-const int height = 32;
+// Set the default width and height of the platform
+const int platformWidth = 100;
+const int platformHeight = 32;
 
 // All the paths to the images
 extern const char* playerImagePath;

@@ -1,5 +1,4 @@
-#include "header/resourcesLoader.hpp"
-#include <iostream>
+#include "header/resourcesPath.hpp"
 
 SDL_Texture* loadTexture(const char* filePath, SDL_Renderer* renderer) {
     SDL_Surface* tempSurface = IMG_Load(filePath);

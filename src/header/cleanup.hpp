@@ -1,7 +1,7 @@
-#ifndef CLEANUP_H
-#define CLEANUP_H
+#ifndef CLEANUP_HPP
+#define CLEANUP_HPP
 
-#include "init.hpp"
+#include "resourcesPath.hpp"
 
 // Function to clean up a texture
 void cleanupTexture(SDL_Texture* texture);
@@ -9,6 +9,7 @@ void cleanupTexture(SDL_Texture* texture);
 // Function to clean up a sound effect
 void cleanupSound(Mix_Chunk* sound);
 
+// Function to clean up the system
 void cleanupSystem();
 
-#endif // RESOURCE_CLEANUP_H
+#endif // CLEANUP_HPP

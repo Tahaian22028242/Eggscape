@@ -1,6 +1,7 @@
-#include "header/cleanup.hpp"
 #include <iostream>
 using namespace std;
+
+#include "header/cleanup.hpp"
 
 void cleanupTexture(SDL_Texture* texture) {
     if (texture != nullptr) {

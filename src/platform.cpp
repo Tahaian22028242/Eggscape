@@ -1,39 +1,21 @@
 #include "header/platform.hpp"
-<<<<<<< HEAD
-#include <cmath>
-=======
-<<<<<<< HEAD
-
-#include <cmath>
-=======
-#include <cmath>
-
->>>>>>> 645291966eb5004e0fa2512a38d41fb6aa59bcbd
->>>>>>> origin/main
 
 Platform::Platform(int index) {
+    width = platformWidth;
+    height = platformHeight;
     
-    // Set the x and y position of the platform
-    x = rand() % 660 + 20; // 660 is the width of the screen, 20 is the offset
-    y = 0 - height - (index * 100); // 100 is the distance between each platform
+    x = rand() % 660 + 20;
+    y = 0 - height - (index * 100);
     
-<<<<<<< HEAD
-    int coinInt = rand() % 4; // 1 in 5 chance of having a coin
-=======
-<<<<<<< HEAD
-    int coinInt = rand() % 4; // 1 in 5 chance of having a coin
-=======
-    int coinInt = rand() % 5; // 1 in 5 chance of having a coin
->>>>>>> 645291966eb5004e0fa2512a38d41fb6aa59bcbd
->>>>>>> origin/main
+    int coinInt = rand() % 4;
     
-    if (coinInt == 0 || index == 0) // First platform will never have a coin
+    if (coinInt == 0 || index == 0)
         hasCoin = false;
     else
         hasCoin = true;
     
-    coinX = x + width/2 - 24/2; // 24 is the width of the coin
-    coinY = y - 24 - 5; // 5 is the offset
+    coinX = x + width/2 - 24/2;
+    coinY = y - 24 - 5;
 }
 
 int Platform::getX() {
@@ -68,12 +50,9 @@ int Platform::getCoinY() {
     return coinY;
 }
 
-void Platform::updatePosition() { // Move the platform down the screen
+void Platform::updatePosition() {
     y+=1;
-    
-    coinX = x + width/2 - 24/2;
-    coinY = y - 24 - 5;
-    
+
     if (y > screenHeight) {
         x = rand() % 660 + 20;
         y = 0 - height;
@@ -85,4 +64,7 @@ void Platform::updatePosition() { // Move the platform down the screen
         else
             hasCoin = true;
     }
+ 
+    coinX = x + width/2 - 24/2;
+    coinY = y - 24 - 5;    
 }

@@ -1,9 +1,7 @@
-#ifndef SCORE_H
-#define SCORE_H
+#ifndef SCORE_MANAGER_HPP
+#define SCORE_MANAGER_HPP
 
-#include <iostream>
-#include <fstream>
-using namespace std;
+#include "resourcesPath.hpp"
 
 class ScoreManager {
     private:
@@ -26,4 +24,4 @@ class ScoreManager {
         string getHighScore();
 
 };
-#endif
+#endif // SCORE_MANAGER_HPP

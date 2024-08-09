@@ -1,8 +1,5 @@
-#ifndef PLAYER_H
-#define PLAYER_H
-
-#include <cmath>
-#include <vector>
+#ifndef PLAYER_HPP
+#define PLAYER_HPP
 
 #include "resourcesPath.hpp"
 
@@ -35,4 +32,4 @@ public:
     Vector2 getVelocity();
     void updatePosition();
 };
-#endif
+#endif // PLAYER_HPP

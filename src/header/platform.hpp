@@ -1,12 +1,12 @@
-#ifndef PLATFORM_H
-#define PLATFORM_H
+#ifndef PLATFORM_HPP
+#define PLATFORM_HPP
 
 #include "resourcesPath.hpp"
 
 class Platform {
 private:
-    double x;
-    double y;
+    int x;
+    int y;
     int width;
     int height;
     bool hasCoin;
@@ -25,4 +25,4 @@ public:
     int getCoinY();
     void updatePosition();
 };
-#endif
+#endif // PLATFORM_HPP

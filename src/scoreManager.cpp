@@ -1,10 +1,9 @@
 #include "header/scoreManager.hpp"
 
 ScoreManager::ScoreManager() {
-    scoreInt = 0;
-    highscoreInt = 0;
-    score = "000";
-    highscore = "BEST: 000";
+    resetScore();
+    highscoreInt = loadHighScore();
+    highscore = "BEST: " + to_string(highscoreInt);
 }
 
 void ScoreManager::loadHighScore() {
