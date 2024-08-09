@@ -2,7 +2,9 @@
 #define RESOURCES_PATH_HPP
 
 #include <iostream>
+#include <iomanip>
 #include <fstream>
+#include <sstream>
 #include <cmath>
 #include <ctime>
 #include <vector>

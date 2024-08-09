@@ -9,7 +9,7 @@ bool InitSDL(SDL_Window*& window, SDL_Renderer*& renderer) {
     TTF_Init();
     
     window = SDL_CreateWindow(
-        "Terri-Fried",
+        "Eggscape",
         SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
         screenWidth, screenHeight,
         SDL_WINDOW_SHOWN
