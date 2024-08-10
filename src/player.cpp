@@ -32,10 +32,6 @@ int Player::getHeight() {
     return height;
 }
 
-bool Player::isOnGround() {
-    return onPlatform;
-}
-
 bool Player::isOnPlatform() {
     return onPlatform;
 }
@@ -52,21 +48,38 @@ Vector2 Player::getVelocity() {
     return velocity;
 }
 
+void Player::setBorderAvailable(bool value) {
+    borderAvailable = value;
+}
+
+bool Player::isBorderAvailable() {
+    return borderAvailable;
+}
+
 // Game's base logic #2: Player's movement(the egg affected by gravity moves left and right).
 void Player::updatePosition() {
     x += velocity.x;
     y += velocity.y;
     
-    if (!isOnGround())
+    if (!isOnPlatform())
         velocity.y += gravity;
     else
         velocity = (Vector2){0, 0};
     
-    // If the egg hits the left side of the screen, it will bounce back.
-    if (x < 0)
-        velocity.x *= -1;
-
-    // If the egg hits the right side of the screen, it will bounce back.
-    if (x + width > screenWidth) 
-        velocity.x *= -1;
+    if (isBorderAvailable()) { 
+        // If the egg hits the left or right border of the screen, it will bounce back.
+        if (x < 0) {
+            x = 0;          
+            velocity.x *= -1;
+        } 
+        if (x + width > screenWidth) {
+            x = screenWidth - width;
+            velocity.x *= -1;
+        }
+    } else {
+        if (x < 0)
+            x = screenWidth - width;
+        if (x + width > screenWidth)
+            x = 0;
+    }
 } // End of game's base logic #2.

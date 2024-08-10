@@ -16,6 +16,7 @@ private:
     int height;
     bool onPlatform;
     Vector2 velocity;
+    bool borderAvailable;
     
 public:
     Player(double x, double y, int width, int height);
@@ -25,11 +26,12 @@ public:
     void setY(int y);
     int getWidth();
     int getHeight();
-    bool isOnGround();
     bool isOnPlatform();
     void setOnPlatform(bool result);
     void setVelocity(double x, double y);
     Vector2 getVelocity();
     void updatePosition();
+    void setBorderAvailable(bool value);
+    bool isBorderAvailable();
 };
 #endif // PLAYER_HPP

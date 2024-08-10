@@ -7,7 +7,10 @@ ScoreManager scoreManager = ScoreManager();
 bool titleScreen = true;
 bool playCoinFX = false;
 
+bool hasBorder = false;
+
 void resetGame() { // Used to reset the game, including the player's score, position and the platforms.
+    player.setBorderAvailable(hasBorder);    
     scoreManager.resetScore();
     
     for (int i = 0; i < 4; i++)
@@ -23,17 +26,19 @@ void checkPlayerCollision() {
     bool onPlatform = false;
     
     for (int i = 0; i < 4; i++) {
+        // Check if the egg collides with the coin.
         if (platforms[i].getHasCoin() && player.getX() + player.getWidth() - 3 > platforms[i].getCoinX() && player.getX() + 3 < platforms[i].getCoinX() + 24 && player.getY() + player.getHeight() - 3 > platforms[i].getCoinY() && player.getY() + 3 < platforms[i].getCoinY() + 24) {
             scoreManager.addScore(1);
             platforms[i].setHasCoin(false);
             playCoinFX = true;
         }
         
+        // Check if the egg collides with the platform.
         if (player.getX() + 1 < platforms[i].getX() + platforms[i].getWidth() && player.getX() + player.getWidth() > platforms[i].getX() && player.getY() + player.getHeight() >= platforms[i].getY() && player.getY() < platforms[i].getY() + platforms[i].getHeight()) {
-            if (player.getY() > platforms[i].getY() + platforms[i].getHeight()/2) {
+            if (player.getY() > platforms[i].getY() + platforms[i].getHeight()/2) { // If the egg is below the platform.
                 player.setVelocity(player.getVelocity().x, 5);
             } 
-            else if (player.getY() + player.getHeight() <  platforms[i].getY() + platforms[i].getHeight()) {    
+            else if (player.getY() + player.getHeight() <  platforms[i].getY() + platforms[i].getHeight()) { // If the egg is above the platform.   
                 onPlatform = true;
                 player.setY(platforms[i].getY() - player.getHeight());
                 player.setY(player.getY() + 1);
@@ -55,7 +60,6 @@ int main(int args, char* argv[]) {
     
     scoreManager.resetScore();
     const char* highscore = scoreManager.getHighScoreString().c_str();
-    //sprintf(highscore, "BEST: %d", highscoreInt);
 
     int mouseDownX = 0;
     int mouseDownY = 0;
@@ -89,18 +93,19 @@ int main(int args, char* argv[]) {
     }
     
     bool quit = false;
-    
+    bool gamePaused = false;
+
     bool mouse_down = false;
     
     int mouse_x, mouse_y;
     
     while (!quit) {
-        SDL_Event e;
+        SDL_Event event;
         bool mouse_released = false;
         bool mouse_pressed = false;
         
-        while (SDL_PollEvent(&e)) {
-            switch(e.type) {
+        while (SDL_PollEvent(&event)) {
+            switch(event.type) {
                 case SDL_QUIT: {
                     quit = true;
                 } break;
@@ -112,7 +117,26 @@ int main(int args, char* argv[]) {
                     mouse_down = false;
                     mouse_released = true;
                 } break;
+                case SDL_KEYDOWN: {
+                    if (event.key.keysym.sym == SDLK_ESCAPE) {
+                        quit = true;
+                    }
+                    else if (event.key.keysym.sym == SDLK_p) {
+                        gamePaused = !gamePaused;
+                    }
+                    else if (event.key.keysym.sym == SDLK_r) {
+                        resetGame();
+                    }
+                    else if (event.key.keysym.sym == SDLK_b) {
+                        hasBorder = !hasBorder;
+                        player.setBorderAvailable(hasBorder);
+                    }
+                } break;
             }
+        }
+
+        if (gamePaused) {
+            continue;
         }
         
         SDL_PumpEvents(); // Update the mouse state
@@ -131,8 +155,7 @@ int main(int args, char* argv[]) {
                 SDL_SetRenderDrawColor(renderer, 0.933 * 255, 0.894 * 255, 0.882 * 255, 1.0 * 255);
                 SDL_RenderClear(renderer); 
                 
-                SDL_Rect logo_rect = { screenWidth/2 - 200, screenHeight/2 - 45 - 30, 400, 90 };
-                SDL_RenderCopy(renderer, logo, NULL, &logo_rect);
+                renderSprite(logo, renderer, screenWidth/2 - 200, screenHeight/2 - 45 - 30, 400, 90);
                 
                 Draw_Font(renderer, highscore, screenWidth/2 - 37, screenHeight/2 + 10, 74, 32, 32, {0, 0, 0});
                 Draw_Font(renderer, "CLICK ANYWHERE TO BEGIN", screenWidth/2 - 134, screenHeight/2 + 50, 268, 32, 32, {178, 150, 125});
@@ -155,11 +178,9 @@ int main(int args, char* argv[]) {
                 SDL_SetRenderDrawColor(renderer, 0.933 * 255, 0.894 * 255, 0.882 * 255, 1.0 * 255);
                 SDL_RenderClear(renderer);
                 
+                renderSprite(splashEggSprite, renderer, screenWidth/2 - 16, screenHeight/2 - 16 - 23, 32, 32);
                 Draw_Font(renderer, "EGG-SCAPE!", screenWidth/2 - 54, screenHeight/2 + 3, 108, 32, 32, {213, 128, 90});
-                
-                SDL_Rect splashEggSprite_rect = { screenWidth/2 - 16, screenHeight/2 - 16 - 23, 32, 32 };
-                SDL_RenderCopy(renderer, splashEggSprite, NULL, &splashEggSprite_rect);
-                
+                      
                 SDL_RenderPresent(renderer);
                 
                 splashTimer += 1;
@@ -172,13 +193,13 @@ int main(int args, char* argv[]) {
             }
   
             // Game's base logic #3: Using the mouse's press and release to control the egg's movement.
-            if (mouse_pressed && player.isOnGround()) {
+            if (mouse_pressed && player.isOnPlatform()) {
                 Mix_PlayChannel(-1, fxClick, 0);
                 mouseDownX = mouse_x;
                 mouseDownY = mouse_y;
             }
             
-            if (mouse_released && player.isOnGround()) {
+            if (mouse_released && player.isOnPlatform()) {
                 if (firstTime) {
                     firstTime = false;
                 }
@@ -212,7 +233,7 @@ int main(int args, char* argv[]) {
             SDL_SetRenderDrawColor(renderer, 0.933 * 255, 0.894 * 255, 0.882 * 255, 1.0 * 255);
             SDL_RenderClear(renderer);
             
-            if (mouse_down && player.isOnGround()) {
+            if (mouse_down && player.isOnPlatform()) {
                 SDL_SetRenderDrawColor(renderer, 178, 150, 125, 255);
                 SDL_RenderDrawLine(
                     renderer,
@@ -226,27 +247,15 @@ int main(int args, char* argv[]) {
             //DrawRectangle(player.getX(), player.getY(), player.getWidth(), player.getHeight(), WHITE);
     
             for (int i = 0; i < 4; i++) {
-                // SDL_Rect platformSprite_rect = { platforms[i].getX(), platforms[i].getY(), 100, 32 };
-                // SDL_RenderCopy(renderer, platformSprite, NULL, &platformSprite_rect);
                 renderSprite(platformSprite, renderer, platforms[i].getX(), platforms[i].getY(), 100, 32);
                 
                 if (platforms[i].getHasCoin()) {
-                    // SDL_Rect coinSprite_rect = { platforms[i].getCoinX(), platforms[i].getCoinY(), 24, 24 };
-                    // SDL_RenderCopy(renderer, coinSprite, NULL, &coinSprite_rect);
                     renderSprite(coinSprite, renderer, platforms[i].getCoinX(), platforms[i].getCoinY(), 24, 24);
                 }
             }
             
-            // SDL_Rect playerSprite_rect = { player.getX(), player.getY(), 32, 32 };
-            // SDL_RenderCopy(renderer, playerSprite, NULL, &playerSprite_rect);
             renderSprite(playerSprite, renderer, player.getX(), player.getY(), 32, 32);
-            
-            // SDL_Rect lavaSprite_rect = { 0, lavaY, 800, 48 };
-            // SDL_RenderCopy(renderer, lavaSprite, NULL, &lavaSprite_rect);
-            renderSprite(lavaSprite, renderer, 0, lavaY, 800, 48);
-            
-            // SDL_Rect scoreBoxSprite_rect = { 17, 17, 102, 70 };
-            // SDL_RenderCopy(renderer, scoreBoxSprite, NULL, &scoreBoxSprite_rect);
+            renderSprite(lavaSprite, renderer, 0, lavaY, 800, 48);            
             renderSprite(scoreBoxSprite, renderer, 17, 17, 102, 70);            
             
             Draw_Font(renderer, scoreManager.getScore().c_str(), 28, 20, 75, 64, 64, {0, 0, 0});
