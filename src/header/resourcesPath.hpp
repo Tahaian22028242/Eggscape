@@ -31,6 +31,7 @@ const int gravity = 1;
 // Set the default width and height of the platform
 const int platformWidth = 100;
 const int platformHeight = 32;
+const int platformSpeed = 1;
 
 // All the paths to the images
 extern const char* playerImagePath;

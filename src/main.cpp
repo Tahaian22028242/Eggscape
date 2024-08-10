@@ -76,12 +76,12 @@ int main(int args, char* argv[]) {
     SDL_Texture* logo = loadTexture(logoImagePath, renderer);
     SDL_Texture* splashEggSprite = loadTexture(splashEggImagePath, renderer);
 
-    Mix_Chunk* fxLaunch = LoadSound(fxLaunchPath);
-    Mix_Chunk* fxClick = LoadSound(fxClickPath);
-    Mix_Chunk* fxDeath = LoadSound(fxDeathPath);
-    Mix_Chunk* fxCoin = LoadSound(fxCoinPath);
-    Mix_Chunk* fxSplash = LoadSound(fxSplashPath);
-    Mix_Chunk* fxSelect = LoadSound(fxSelectPath);
+    Mix_Chunk* fxLaunch = loadSound(fxLaunchPath);
+    Mix_Chunk* fxClick = loadSound(fxClickPath);
+    Mix_Chunk* fxDeath = loadSound(fxDeathPath);
+    Mix_Chunk* fxCoin = loadSound(fxCoinPath);
+    Mix_Chunk* fxSplash = loadSound(fxSplashPath);
+    Mix_Chunk* fxSelect = loadSound(fxSelectPath);
 
     if (fxLaunch == nullptr || fxClick == nullptr || fxDeath == nullptr || fxCoin == nullptr || fxSplash == nullptr || fxSelect == nullptr) {
         cerr << "Failed to load audio: " << Mix_GetError() << endl;
@@ -226,23 +226,28 @@ int main(int args, char* argv[]) {
             //DrawRectangle(player.getX(), player.getY(), player.getWidth(), player.getHeight(), WHITE);
     
             for (int i = 0; i < 4; i++) {
-                SDL_Rect platformSprite_rect = { platforms[i].getX(), platforms[i].getY(), 100, 32 };
-                SDL_RenderCopy(renderer, platformSprite, NULL, &platformSprite_rect);
+                // SDL_Rect platformSprite_rect = { platforms[i].getX(), platforms[i].getY(), 100, 32 };
+                // SDL_RenderCopy(renderer, platformSprite, NULL, &platformSprite_rect);
+                renderSprite(platformSprite, renderer, platforms[i].getX(), platforms[i].getY(), 100, 32);
                 
                 if (platforms[i].getHasCoin()) {
-                    SDL_Rect coinSprite_rect = { platforms[i].getCoinX(), platforms[i].getCoinY(), 24, 24 };
-                    SDL_RenderCopy(renderer, coinSprite, NULL, &coinSprite_rect);
+                    // SDL_Rect coinSprite_rect = { platforms[i].getCoinX(), platforms[i].getCoinY(), 24, 24 };
+                    // SDL_RenderCopy(renderer, coinSprite, NULL, &coinSprite_rect);
+                    renderSprite(coinSprite, renderer, platforms[i].getCoinX(), platforms[i].getCoinY(), 24, 24);
                 }
             }
             
-            SDL_Rect playerSprite_rect = { player.getX(), player.getY(), 32, 32 };
-            SDL_RenderCopy(renderer, playerSprite, NULL, &playerSprite_rect);
+            // SDL_Rect playerSprite_rect = { player.getX(), player.getY(), 32, 32 };
+            // SDL_RenderCopy(renderer, playerSprite, NULL, &playerSprite_rect);
+            renderSprite(playerSprite, renderer, player.getX(), player.getY(), 32, 32);
             
-            SDL_Rect lavaSprite_rect = { 0, lavaY, 800, 48 };
-            SDL_RenderCopy(renderer, lavaSprite, NULL, &lavaSprite_rect);
+            // SDL_Rect lavaSprite_rect = { 0, lavaY, 800, 48 };
+            // SDL_RenderCopy(renderer, lavaSprite, NULL, &lavaSprite_rect);
+            renderSprite(lavaSprite, renderer, 0, lavaY, 800, 48);
             
-            SDL_Rect scoreBoxSprite_rect = { 17, 17, 102, 70 };
-            SDL_RenderCopy(renderer, scoreBoxSprite, NULL, &scoreBoxSprite_rect);            
+            // SDL_Rect scoreBoxSprite_rect = { 17, 17, 102, 70 };
+            // SDL_RenderCopy(renderer, scoreBoxSprite, NULL, &scoreBoxSprite_rect);
+            renderSprite(scoreBoxSprite, renderer, 17, 17, 102, 70);            
             
             Draw_Font(renderer, scoreManager.getScore().c_str(), 28, 20, 75, 64, 64, {0, 0, 0});
             Draw_Font(renderer, scoreManager.getHighScoreString().c_str(), 17, 90, 74, 32, 32, {0, 0, 0});

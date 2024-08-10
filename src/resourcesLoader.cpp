@@ -14,12 +14,17 @@ SDL_Texture* loadTexture(const char* filePath, SDL_Renderer* renderer) {
     return texture;
 }
 
-Mix_Chunk* LoadSound(const char* filePath) {
+Mix_Chunk* loadSound(const char* filePath) {
     Mix_Chunk* sound = Mix_LoadWAV(filePath);
     if (!sound) {
         std::cerr << "Failed to load sound: " << Mix_GetError() << std::endl;
     }
     return sound;
+}
+
+void renderSprite(SDL_Texture* sprite ,SDL_Renderer* renderer, int x, int y, int width, int height) {
+    SDL_Rect sprite_rect = { x, y, width, height };
+    SDL_RenderCopy(renderer, sprite, NULL, &sprite_rect);
 }
 
 void Draw_Font(SDL_Renderer *renderer, const char *str, int x, int y, int width, int height, int size, SDL_Color color) {

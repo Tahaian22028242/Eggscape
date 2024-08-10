@@ -12,6 +12,7 @@ private:
     bool hasCoin;
     int coinX;
     int coinY;
+    int isMoving; // 0 = not moving, 1 = moving
     
 public:
     Platform(int index);
