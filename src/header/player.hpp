@@ -19,7 +19,7 @@ private:
     bool borderAvailable;
     
 public:
-    Player(double x, double y, int width, int height);
+    Player(double x, double y/*, int width, int height*/);
     int getX();
     int getY();
     void setX(int x);

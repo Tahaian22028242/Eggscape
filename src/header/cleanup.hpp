@@ -9,6 +9,9 @@ void cleanupTexture(SDL_Texture* texture);
 // Function to clean up a sound effect
 void cleanupSound(Mix_Chunk* sound);
 
+// Function to clean up music
+void cleanupMusic(Mix_Music* music);
+
 // Function to clean up the system
 void cleanupSystem();
 

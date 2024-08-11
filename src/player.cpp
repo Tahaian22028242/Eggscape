@@ -1,10 +1,10 @@
 #include "header/player.hpp"
 
-Player::Player(double x, double y, int width, int height) {
+Player::Player(double x, double y/*, int width, int height*/) {
     this->x = x;
     this->y = y;
-    this->width = width;
-    this->height = height;
+    this->width = playerWidth;
+    this->height = playerHeight;
     onPlatform = false;
 }
 
@@ -58,12 +58,14 @@ bool Player::isBorderAvailable() {
 
 // Game's base logic #2: Player's movement(the egg affected by gravity moves left and right).
 void Player::updatePosition() {
-    x += velocity.x;
+    x += velocity.x; 
     y += velocity.y;
     
-    if (!isOnPlatform())
+    if (!isOnPlatform()) 
+    // If the egg is not on the platform, it will be affected by gravity.
         velocity.y += gravity;
-    else
+    else 
+    // If the egg is on the platform, it will stand still.
         velocity = (Vector2){0, 0};
     
     if (isBorderAvailable()) { 
@@ -77,9 +79,10 @@ void Player::updatePosition() {
             velocity.x *= -1;
         }
     } else {
+        // If the egg hits the left or right border of the screen, it will wrap around.
         if (x < 0)
-            x = screenWidth - width;
-        if (x + width > screenWidth)
-            x = 0;
+            x = screenWidth - width; 
+        if (x + width > screenWidth) 
+            x = 0; 
     }
 } // End of game's base logic #2.

@@ -6,15 +6,16 @@ Platform::Platform(int index) {
     
     x = rand() % 660 + 20;
     y = 0 - height - (index * 100);
-    if (index == 0) {
-        isMoving = 0;
-    } else {
-        isMoving = rand() % 4;
-    }
 
     int coinInt = rand() % 4;
+    isMoving = rand() % 4;
+
+    if (index == 0) {
+        isMoving = 0;
+        coinInt = 0;
+    }
     
-    if (coinInt == 0 || index == 0)
+    if (coinInt == 0)
         hasCoin = false;
     else
         hasCoin = true;
@@ -55,29 +56,35 @@ int Platform::getCoinY() {
     return coinY;
 }
 
+int Platform::getIsMoving() {
+    return isMoving;
+}
+
 void Platform::updatePosition() {
-    y+=platformSpeed;
+    y += platformSpeed;
 
     if (isMoving != 0) {
         if (isMoving == 1) {
-            x-=platformSpeed;
+            x -= platformSpeed;
             if (x < 0) {
                 x = 0;
                 isMoving = 2;
             }
         } else if (isMoving == 2) {
-            x+=platformSpeed;
+            x += platformSpeed;
             if (x + width > screenWidth) {
                 x = screenWidth - width;
                 isMoving = 1;
             }
-        } else {
+        }
+
+        else {
             bool isLeft = rand() % 2;
             if (isLeft) {
-                x-=platformSpeed;
+                x -= platformSpeed;
                 isLeft = false;
             } else {
-                x+=platformSpeed;
+                x += platformSpeed;
                 isLeft = true;
             }
         }

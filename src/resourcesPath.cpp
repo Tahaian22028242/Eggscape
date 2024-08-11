@@ -17,5 +17,9 @@ const char* fxCoinPath = "C:/Users/DELL/SDL2_GameProject/resources/coin.wav";
 const char* fxSplashPath = "C:/Users/DELL/SDL2_GameProject/resources/splash.wav";
 const char* fxSelectPath = "C:/Users/DELL/SDL2_GameProject/resources/select.wav";
 
+// All the paths to the music
+const char* music1Path = "C:/Users/DELL/SDL2_GameProject/resources/TheFatRat-Unity.mp3";
+const char* music2Path = "C:/Users/DELL/SDL2_GameProject/resources/StarSky-TwoStepsFromHell.mp3";
+
 // All the paths to the font
 const char* fontPath = "C:/Users/DELL/SDL2_GameProject/resources/font.otf";

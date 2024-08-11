@@ -16,9 +16,10 @@ using namespace std;
 #include <SDL2/SDL_ttf.h>
 
 #include "init.hpp"
-#include "resourcesLoader.hpp"
+#include "resourcesManager.hpp"
 #include "player.hpp"
 #include "platform.hpp"
+#include "coin.hpp"
 #include "scoreManager.hpp"
 #include "cleanup.hpp"
 
@@ -28,10 +29,24 @@ const int screenHeight = 450;
 const double pi = 3.1415926535897;
 const int gravity = 1;
 
+// Set the default width and height of the player
+const int playerWidth = 26;
+const int playerHeight = 32;
+
 // Set the default width and height of the platform
 const int platformWidth = 100;
 const int platformHeight = 32;
 const int platformSpeed = 1;
+
+// Set the default attributes of the coin
+const int coinWidth = 24;
+const int coinHeight = 24;
+const int coinSpeed = 1;
+const int coinValue = 1;
+
+// Set the minimum and maximum velocity used in game
+const int minVelocity = 1;
+const int maxVelocity = 5;
 
 // All the paths to the images
 extern const char* playerImagePath;
@@ -49,6 +64,10 @@ extern const char* fxDeathPath;
 extern const char* fxCoinPath;
 extern const char* fxSplashPath;
 extern const char* fxSelectPath;
+
+// All the paths to the music
+extern const char* music1Path;
+extern const char* music2Path;
 
 // All the paths to the font
 extern const char* fontPath;

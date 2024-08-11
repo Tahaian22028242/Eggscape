@@ -19,6 +19,14 @@ void cleanupSound(Mix_Chunk* sound) {
     }
 }
 
+void cleanupMusic(Mix_Music* music) {
+    if (music != nullptr) {
+        Mix_FreeMusic(music);
+    } else {
+        cerr << "Attempted to clean up a null music." << endl;
+    }
+}
+
 void cleanupSystem() {
     Mix_CloseAudio();
     Mix_Quit();

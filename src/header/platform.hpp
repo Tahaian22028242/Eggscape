@@ -24,6 +24,7 @@ public:
     void setHasCoin(bool value);
     int getCoinX();
     int getCoinY();
+    int getIsMoving();
     void updatePosition();
 };
 #endif // PLATFORM_HPP
