@@ -10,7 +10,8 @@ bool playCoinFX = false;
 bool hasBorder = false;
 
 void resetGame() { // Used to reset the game, including the player's score, position and the platforms.
-    player.setBorderAvailable(hasBorder);    
+    player.setBorderAvailable(hasBorder);
+    player.setLife(player.getLife());    
     scoreManager.resetScore();
     
     for (int i = 0; i < 4; i++)
@@ -93,8 +94,14 @@ int main(int args, char* argv[]) {
     Mix_Chunk* fxSplash = loadSound(fxSplashPath);
     Mix_Chunk* fxSelect = loadSound(fxSelectPath);
 
-    Mix_Music* music1 = loadMusic(music1Path);
-    if (Mix_PlayMusic(music1, -1) == -1) {
+    // Load the random background music
+    bool randomMusic = rand() % 2;
+    Mix_Music* backgroundMusic = nullptr;
+    if (randomMusic) 
+        backgroundMusic = loadMusic(music1Path);
+    else 
+        backgroundMusic = loadMusic(music2Path);
+    if (Mix_PlayMusic(backgroundMusic, -1) == -1) {
         cerr << "Failed to play music: " << Mix_GetError() << endl;
     }
 
@@ -105,6 +112,8 @@ int main(int args, char* argv[]) {
     
     bool quit = false;
     bool gamePaused = false;
+    bool gameStarted = false;
+    bool settingsScreen = false;
 
     bool mouse_down = false;
     
@@ -148,8 +157,11 @@ int main(int args, char* argv[]) {
 
         if (gamePaused) {
             // TODO: Display a pause screen
-            // Pause the music
-            Mix_PauseMusic();
+            Mix_PauseMusic(); // Pause the music
+            renderSprite(logo, renderer, screenWidth/2 - 200, screenHeight/2 - 45 - 30, 400, 90);
+            Draw_Font(renderer, scoreManager.getHighScoreString().c_str(), screenWidth/2 - 37, screenHeight/2 + 10, 74, 32, 32, {0, 0, 0});
+            Draw_Font(renderer, "Press 'P' to continue", screenWidth/2 - 134, screenHeight/2 + 50, 268, 32, 32, {178, 150, 125});
+            SDL_RenderPresent(renderer);
             continue;
         } else {
             // Resume the music
@@ -158,36 +170,12 @@ int main(int args, char* argv[]) {
         
         SDL_PumpEvents(); // Update the mouse state
         SDL_GetMouseState(&mouse_x, &mouse_y); // Get the mouse's position
-        
         // TODO: Vsync instead
-        SDL_Delay(12);
+        SDL_Delay(12); // 60 FPS
         
         if (titleScreen) { // Display the title screen
-            if (splashTimer > 120) { 
-                if (!playedSelect) { // Play the select sound effect only once.
-                    Mix_PlayChannel(-1, fxSelect, 0);
-                    playedSelect = true;
-                }
-                
-                SDL_SetRenderDrawColor(renderer, 0.933 * 255, 0.894 * 255, 0.882 * 255, 1.0 * 255);
-                SDL_RenderClear(renderer); 
-                
-                renderSprite(logo, renderer, screenWidth/2 - 200, screenHeight/2 - 45 - 30, 400, 90);
-                
-                Draw_Font(renderer, highscore, screenWidth/2 - 37, screenHeight/2 + 10, 74, 32, 32, {0, 0, 0});
-                Draw_Font(renderer, "CLICK ANYWHERE TO BEGIN", screenWidth/2 - 134, screenHeight/2 + 50, 268, 32, 32, {178, 150, 125});
-                
-                SDL_RenderPresent(renderer);
-                
-                if (mouse_pressed) {
-                    Mix_PlayChannel(-1, fxSelect, 0);
-                    titleScreen = false;
-                    mouseDownX = mouse_x;
-                    mouseDownY = mouse_y;
-                }
-            }
-            else {
-                if (!playedSplash) {
+            if (splashTimer < 120) { 
+                if (!playedSplash) { // Play the splash sound effect only once.
                     Mix_PlayChannel(-1, fxSplash, 0);
                     playedSplash = true;
                 }
@@ -197,13 +185,74 @@ int main(int args, char* argv[]) {
                 
                 renderSprite(splashEggSprite, renderer, screenWidth/2 - 16, screenHeight/2 - 16 - 23, 32, 32);
                 Draw_Font(renderer, "EGG-SCAPE!", screenWidth/2 - 54, screenHeight/2 + 3, 108, 32, 32, {213, 128, 90});
+                Draw_Font(renderer, "JUMP FOR YOUR LIFE!", screenWidth/2 - 100, screenHeight/2 + 40, 200, 32, 32, {178, 150, 125});
                       
                 SDL_RenderPresent(renderer);
+                //cout << "Splash timer: " << splashTimer << endl;
                 
                 splashTimer += 1;
+            }
+            else {
+                // if (SDL_WaitEvent(&event)) {
+                //     if (event.type == SDL_MOUSEMOTION) {
+                //         SDL_GetMouseState(&mouse_x, &mouse_y);
+                //         cout << "Mouse position: " << mouse_x << " " << mouse_y << endl;
+                //     }
+                //     else if (event.type == SDL_KEYDOWN) {
+                //         if (event.key.keysym.sym == SDLK_p) {
+                //             gamePaused = !gamePaused;
+                //             if (gamePaused) {
+                //                 Mix_PauseMusic();
+                //             } else {
+                //                 Mix_ResumeMusic();
+                //             }
+                //         }
+                //     }
+                // }       
+                if (!playedSelect) { // Play the select sound effect only once.
+                    Mix_PlayChannel(-1, fxSelect, 0);
+                    playedSelect = true;
+                }
+                
+                SDL_SetRenderDrawColor(renderer, 0.933 * 255, 0.894 * 255, 0.882 * 255, 1.0 * 255);
+                SDL_RenderClear(renderer); 
+                
+                renderSprite(logo, renderer, screenWidth/2 - 200, screenHeight/2 - 45 - 30, 400, 90);
+                Draw_Font(renderer, highscore, screenWidth/2 - 37, screenHeight/2 + 10, 74, 32, 32, {0, 0, 0});
+                //Draw_Font(renderer, "CLICK ANYWHERE TO BEGIN", screenWidth/2 - 134, screenHeight/2 + 50, 268, 32, 32, {178, 150, 125});
+                Draw_Font(renderer, "Start", screenWidth/2 - 20, screenHeight/2 + 100, 40, 32, 32, {178, 150, 125});
+                Draw_Font(renderer, "Settings", screenWidth/2 - 30, screenHeight/2 + 150, 60, 32, 32, {178, 150, 125});
+
+                SDL_RenderPresent(renderer);
+                
+                // if (mouse_pressed) { /* This is the old code that checks if the mouse is pressed (anywhere) to start the game. */
+                //     Mix_PlayChannel(-1, fxSelect, 0);
+                //     titleScreen = false;
+                //     mouseDownX = mouse_x;
+                //     mouseDownY = mouse_y;
+                // }
+
+                if (mouse_pressed && mouse_x > screenWidth/2 - 20 && mouse_x < screenWidth/2 + 20 && mouse_y > screenHeight/2 + 100 && mouse_y < screenHeight/2 + 132) {
+                    Mix_PlayChannel(-1, fxSelect, 0);
+                    titleScreen = false;
+                    gameStarted = true;
+                    mouseDownX = mouse_x;
+                    mouseDownY = mouse_y;
+                }
+
+                // if (mouse_pressed && 
+                //     mouse_x > screenWidth/2 - 30 && mouse_x < screenWidth/2 + 30 
+                //     && mouse_y > screenHeight/2 + 150 && mouse_y < screenHeight/2 + 182) {
+                //     Mix_PlayChannel(-1, fxSelect, 0);
+                //     titleScreen = false;
+                //     settingsScreen = true;
+                //     mouseDownX = mouse_x;
+                //     mouseDownY = mouse_y;
+                // }
             }            
-        } 
-        else {
+        }
+
+        /*else*/ if (gameStarted) {
             if (playCoinFX) {
                 Mix_PlayChannel(-1, fxCoin, 0);
                 playCoinFX = false;
@@ -300,7 +349,7 @@ int main(int args, char* argv[]) {
     cleanupSound(fxSplash);
     cleanupSound(fxSelect);
 
-    cleanupMusic(music1);
+    cleanupMusic(backgroundMusic);
 
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);

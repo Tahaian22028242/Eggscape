@@ -19,7 +19,7 @@ using namespace std;
 #include "resourcesManager.hpp"
 #include "player.hpp"
 #include "platform.hpp"
-#include "coin.hpp"
+//#include "coin.hpp"
 #include "scoreManager.hpp"
 #include "cleanup.hpp"
 
@@ -29,9 +29,10 @@ const int screenHeight = 450;
 const double pi = 3.1415926535897;
 const int gravity = 1;
 
-// Set the default width and height of the player
+// Set the default attributes of the player
 const int playerWidth = 26;
 const int playerHeight = 32;
+const int playerMaxLife = 3;
 
 // Set the default width and height of the platform
 const int platformWidth = 100;

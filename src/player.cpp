@@ -5,7 +5,9 @@ Player::Player(double x, double y/*, int width, int height*/) {
     this->y = y;
     this->width = playerWidth;
     this->height = playerHeight;
-    onPlatform = false;
+    this->onPlatform = false;
+    this->velocity = (Vector2){0, 0};
+    this->life = playerMaxLife;
 }
 
 int Player::getX() {
@@ -30,6 +32,14 @@ int Player::getWidth() {
 
 int Player::getHeight() {
     return height;
+}
+
+unsigned int Player::getLife() {
+    return life;
+}
+
+void Player::setLife(unsigned int value) {
+    life = value;
 }
 
 bool Player::isOnPlatform() {
@@ -68,6 +78,11 @@ void Player::updatePosition() {
     // If the egg is on the platform, it will stand still.
         velocity = (Vector2){0, 0};
     
+    if (y > screenHeight) {
+        // If the egg falls off the screen, it will lose a life.
+        life--;
+    }
+
     if (isBorderAvailable()) { 
         // If the egg hits the left or right border of the screen, it will bounce back.
         if (x < 0) {
