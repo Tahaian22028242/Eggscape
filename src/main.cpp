@@ -4,10 +4,9 @@ Platform platforms[4] = {{0}, {1}, {2}, {3}};
 Player player(platforms[0].getX() + platforms[0].getWidth()/2 - 26/2, platforms[0].getY() - player.getHeight()/*, 26, 32*/);
 ScoreManager scoreManager = ScoreManager();
 
-bool titleScreen = true;
-bool playCoinFX = false;
-
 bool hasBorder = false;
+// Used to play the coin sound effect only once.
+bool playCoinFX = false;
 
 void resetGame() { // Used to reset the game, including the player's score, position and the platforms.
     player.setBorderAvailable(hasBorder);
@@ -63,7 +62,7 @@ int main(int args, char* argv[]) {
         return -1;
     }
 
-    srand(time(NULL));
+    srand(time(NULL)); // Seed the random number generator
     
     scoreManager.resetScore();
     const char* highscore = scoreManager.getHighScoreString().c_str();
@@ -75,9 +74,9 @@ int main(int args, char* argv[]) {
     double timer = 0; // Used to animate the lava.
     double splashTimer = 0; // Used to display the splash screen for a few seconds.
     
-    bool firstTime = true;
+    bool firstTime = true; // Used to prevent the egg from launching when the game starts.
     bool playedSplash = false; // Used to play the splash sound effect only once.
-    bool playedSelect = false;
+    bool playedSelect = false; // Used to play the select sound effect only once.
 
     SDL_Texture* playerSprite = loadTexture(playerImagePath, renderer);
     SDL_Texture* lavaSprite = loadTexture(lavaImagePath, renderer);
@@ -93,6 +92,8 @@ int main(int args, char* argv[]) {
     Mix_Chunk* fxCoin = loadSound(fxCoinPath);
     Mix_Chunk* fxSplash = loadSound(fxSplashPath);
     Mix_Chunk* fxSelect = loadSound(fxSelectPath);
+    int soundVolume = MIX_MAX_VOLUME / 2; // Initial sound volume (50%)
+    Mix_Volume(-1, soundVolume);
 
     // Load the random background music
     bool randomMusic = rand() % 2;
@@ -101,6 +102,9 @@ int main(int args, char* argv[]) {
         backgroundMusic = loadMusic(music1Path);
     else 
         backgroundMusic = loadMusic(music2Path);
+
+    int musicVolume = MIX_MAX_VOLUME / 2; // Initial music volume (50%)
+    Mix_VolumeMusic(musicVolume);
     if (Mix_PlayMusic(backgroundMusic, -1) == -1) {
         cerr << "Failed to play music: " << Mix_GetError() << endl;
     }
@@ -109,14 +113,17 @@ int main(int args, char* argv[]) {
         cerr << "Failed to load audio: " << Mix_GetError() << endl;
         return 1;
     }
+
+    bool draggingMusic = false;
+    bool draggingSound = false;
     
     bool quit = false;
+    bool titleScreen = true;
     bool gamePaused = false;
     bool gameStarted = false;
     bool settingsScreen = false;
-
-    bool mouse_down = false;
     
+    bool mouse_down = false;
     int mouse_x, mouse_y;
     
     while (!quit) {
@@ -132,9 +139,11 @@ int main(int args, char* argv[]) {
                 case SDL_MOUSEBUTTONDOWN: {
                     mouse_down = true;
                     mouse_pressed = true;
+                    //mouse_released = false;
                 } break;
                 case SDL_MOUSEBUTTONUP: {
                     mouse_down = false;
+                    //mouse_pressed = false;
                     mouse_released = true;
                 } break;
                 case SDL_KEYDOWN: {
@@ -157,14 +166,17 @@ int main(int args, char* argv[]) {
 
         if (gamePaused) {
             // TODO: Display a pause screen
+            // gameStarted = false;
+            // SDL_RenderClear(renderer);
             Mix_PauseMusic(); // Pause the music
             renderSprite(logo, renderer, screenWidth/2 - 200, screenHeight/2 - 45 - 30, 400, 90);
             Draw_Font(renderer, scoreManager.getHighScoreString().c_str(), screenWidth/2 - 37, screenHeight/2 + 10, 74, 32, 32, {0, 0, 0});
             Draw_Font(renderer, "Press 'P' to continue", screenWidth/2 - 134, screenHeight/2 + 50, 268, 32, 32, {178, 150, 125});
-            SDL_RenderPresent(renderer);
+            //SDL_RenderPresent(renderer);
             continue;
         } else {
             // Resume the music
+            // gameStarted = true;
             Mix_ResumeMusic();
         }
         
@@ -232,7 +244,9 @@ int main(int args, char* argv[]) {
                 //     mouseDownY = mouse_y;
                 // }
 
-                if (mouse_pressed && mouse_x > screenWidth/2 - 20 && mouse_x < screenWidth/2 + 20 && mouse_y > screenHeight/2 + 100 && mouse_y < screenHeight/2 + 132) {
+                if (mouse_pressed &&
+                     mouse_x > screenWidth/2 - 20 && mouse_x < screenWidth/2 + 20 &&
+                     mouse_y > screenHeight/2 + 100 && mouse_y < screenHeight/2 + 132) {
                     Mix_PlayChannel(-1, fxSelect, 0);
                     titleScreen = false;
                     gameStarted = true;
@@ -240,19 +254,96 @@ int main(int args, char* argv[]) {
                     mouseDownY = mouse_y;
                 }
 
-                // if (mouse_pressed && 
-                //     mouse_x > screenWidth/2 - 30 && mouse_x < screenWidth/2 + 30 
-                //     && mouse_y > screenHeight/2 + 150 && mouse_y < screenHeight/2 + 182) {
-                //     Mix_PlayChannel(-1, fxSelect, 0);
-                //     titleScreen = false;
-                //     settingsScreen = true;
-                //     mouseDownX = mouse_x;
-                //     mouseDownY = mouse_y;
-                // }
+                if (mouse_pressed &&
+                     mouse_x > screenWidth/2 - 30 && mouse_x < screenWidth/2 + 30 &&
+                     mouse_y > screenHeight/2 + 150 && mouse_y < screenHeight/2 + 182) {
+                    Mix_PlayChannel(-1, fxSelect, 0);
+                    titleScreen = false;
+                    settingsScreen = true;
+                    mouseDownX = mouse_x;
+                    mouseDownY = mouse_y;
+                }
             }            
         }
 
-        /*else*/ if (gameStarted) {
+        if (settingsScreen) {
+            SDL_SetRenderDrawColor(renderer, 0.933 * 255, 0.894 * 255, 0.882 * 255, 1.0 * 255);
+            SDL_RenderClear(renderer);
+        
+            // Draw labels
+            Draw_Font(renderer, "SETTINGS", screenWidth/2 - 60, screenHeight/2 - 150, 120, 32, 64, {213, 128, 90});
+
+            Draw_Font(renderer, "Music:", screenWidth/2 - 100, screenHeight/2 - 100, 60, 32, 32, {178, 150, 125});
+            Draw_Font(renderer, "Sound:", screenWidth/2 - 100, screenHeight/2 - 50, 60, 32, 32, {178, 150, 125});
+
+            Draw_Font(renderer, "Border:", screenWidth/2 - 100, screenHeight/2, 60, 32, 32, {178, 150, 125});
+            if (player.isBorderAvailable()) {
+                Draw_Font(renderer, "ON!", screenWidth/2 + 50, screenHeight/2, 20, 32, 32, {213, 128, 90});
+            } else {
+                Draw_Font(renderer, "OFF!", screenWidth/2 + 50, screenHeight/2, 20, 32, 32, {178, 150, 125});
+            }
+
+            if (mouse_x > screenWidth/2 - 20 && mouse_x < screenWidth/2 + 20 &&
+                 mouse_y > screenHeight/2 + 100 && mouse_y < screenHeight/2 + 132)
+
+                Draw_Font(renderer, "Back", screenWidth/2 - 20, screenHeight/2 + 100, 40, 32, 32, {213, 128, 90});
+            else 
+                Draw_Font(renderer, "Back", screenWidth/2 - 20, screenHeight/2 + 100, 40, 32, 32, {178, 150, 125});
+        
+            // Draw volume lines
+            SDL_SetRenderDrawColor(renderer, 178, 150, 125, 255);
+            SDL_RenderDrawLine(renderer, screenWidth/2 - 30, screenHeight/2 - 82, screenWidth/2 + 170, screenHeight/2 - 82);
+            SDL_RenderDrawLine(renderer, screenWidth/2 - 30, screenHeight/2 - 32, screenWidth/2 + 170, screenHeight/2 - 32);
+        
+            // Draw draggable rectangles
+            SDL_Rect musicRect = {screenWidth/2 - 50 + (musicVolume * 200 / MIX_MAX_VOLUME), screenHeight/2 - 87, 10, 10};
+            SDL_Rect soundRect = {screenWidth/2 - 50 + (soundVolume * 200 / MIX_MAX_VOLUME), screenHeight/2 - 37, 10, 10};
+            SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+            SDL_RenderFillRect(renderer, &musicRect);
+            SDL_RenderFillRect(renderer, &soundRect);
+        
+            SDL_RenderPresent(renderer);
+        
+            // Handle volume adjustment
+            if (mouse_down) {
+                if (mouse_x > musicRect.x && mouse_x < musicRect.x + musicRect.w &&
+                    mouse_y > musicRect.y && mouse_y < musicRect.y + musicRect.h) 
+                {
+                    draggingMusic = true;
+                } 
+                else if (mouse_x > soundRect.x && mouse_x < soundRect.x + soundRect.w &&
+                         mouse_y > soundRect.y && mouse_y < soundRect.y + soundRect.h)
+                {
+                    draggingSound = true;
+                } 
+                else if (mouse_x > screenWidth/2 - 20 && mouse_x < screenWidth/2 + 20 &&
+                         mouse_y > screenHeight/2 + 100 && mouse_y < screenHeight/2 + 132) 
+                {
+                    Mix_PlayChannel(-1, fxSelect, 0);
+                    settingsScreen = false;
+                    titleScreen = true;
+                    mouseDownX = mouse_x;
+                    mouseDownY = mouse_y;
+                }
+            } else {
+                draggingMusic = false;
+                draggingSound = false;
+            }
+        
+            if (draggingMusic) {
+                int new_x = std::min(std::max(mouse_x, screenWidth/2 - 50), screenWidth/2 + 150);
+                musicVolume = (new_x - (screenWidth/2 - 50)) * MIX_MAX_VOLUME / 200;
+                Mix_VolumeMusic(musicVolume);
+            }
+
+            if (draggingSound) {
+                int new_x = std::min(std::max(mouse_x, screenWidth/2 - 50), screenWidth/2 + 150);
+                soundVolume = (new_x - (screenWidth/2 - 50)) * MIX_MAX_VOLUME / 200;
+                Mix_Volume(-1, soundVolume); // Set volume for all channels
+            }
+        }
+
+        if (gameStarted) {
             if (playCoinFX) {
                 Mix_PlayChannel(-1, fxCoin, 0);
                 playCoinFX = false;
@@ -317,7 +408,7 @@ int main(int args, char* argv[]) {
                 
                 if (platforms[i].getHasCoin()) {
                     renderSprite(coinSprite, renderer, 
-                            platforms[i].getCoinX(), platforms[i].getCoinY(), coinWidth, coinHeight);
+                        platforms[i].getCoinX(), platforms[i].getCoinY(), coinWidth, coinHeight);
                 }
             }
             
@@ -330,7 +421,6 @@ int main(int args, char* argv[]) {
             
             SDL_RenderPresent(renderer);
         }
-       
     }
 
     // Cleanup resources
