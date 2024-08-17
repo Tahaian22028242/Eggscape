@@ -53,5 +53,6 @@
         "streambuf": "cpp",
         "cinttypes": "cpp",
         "typeinfo": "cpp"
-    }
+    },
+    "C_Cpp.default.compilerPath": "C:/Users/DELL/ucrt64/bin/g++.exe"
 }

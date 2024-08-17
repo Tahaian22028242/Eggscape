@@ -33,7 +33,7 @@ public:
     Vector2 getVelocity();
     void updatePosition();
     void setBorderAvailable(bool value);
-    bool isBorderAvailable();
+    bool getBorderAvailable();
     void setLife(unsigned int value);
     unsigned int getLife();
 };

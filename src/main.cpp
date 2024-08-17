@@ -277,12 +277,19 @@ int main(int args, char* argv[]) {
             Draw_Font(renderer, "Sound:", screenWidth/2 - 100, screenHeight/2 - 50, 60, 32, 32, {178, 150, 125});
 
             Draw_Font(renderer, "Border:", screenWidth/2 - 100, screenHeight/2, 60, 32, 32, {178, 150, 125});
-            if (player.isBorderAvailable()) {
-                Draw_Font(renderer, "ON!", screenWidth/2 + 50, screenHeight/2, 20, 32, 32, {213, 128, 90});
-            } else {
-                Draw_Font(renderer, "OFF!", screenWidth/2 + 50, screenHeight/2, 20, 32, 32, {178, 150, 125});
+            std::string borderStatus = hasBorder ? "ON!" : "Off!";
+            Draw_Font(renderer, borderStatus.c_str(), screenWidth/2 + 50, screenHeight/2, 20, 32, 32, {213, 128, 90});
+            if (mouse_pressed &&
+                 mouse_x > screenWidth/2 + 50 && mouse_x < screenWidth/2 + 70 &&
+                 mouse_y > screenHeight/2 && mouse_y < screenHeight/2 + 32) {
+                Mix_PlayChannel(-1, fxSelect, 0);
+                hasBorder = !hasBorder;
+                player.setBorderAvailable(hasBorder);
             }
 
+            // bool keyConfigScreen = false;
+            // Draw_Font(renderer, "Key Config", screenWidth/2 - 100, screenHeight/2 + 50, 60, 32, 32, {178, 150, 125}); 
+    
             if (mouse_x > screenWidth/2 - 20 && mouse_x < screenWidth/2 + 20 &&
                  mouse_y > screenHeight/2 + 100 && mouse_y < screenHeight/2 + 132)
 

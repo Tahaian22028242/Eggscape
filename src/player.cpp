@@ -62,7 +62,7 @@ void Player::setBorderAvailable(bool value) {
     borderAvailable = value;
 }
 
-bool Player::isBorderAvailable() {
+bool Player::getBorderAvailable() {
     return borderAvailable;
 }
 
@@ -83,7 +83,7 @@ void Player::updatePosition() {
         life--;
     }
 
-    if (isBorderAvailable()) { 
+    if (getBorderAvailable()) { 
         // If the egg hits the left or right border of the screen, it will bounce back.
         if (x < 0) {
             x = 0;          
