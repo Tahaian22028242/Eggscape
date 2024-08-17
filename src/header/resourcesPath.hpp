@@ -19,7 +19,7 @@ using namespace std;
 #include "resourcesManager.hpp"
 #include "player.hpp"
 #include "platform.hpp"
-//#include "coin.hpp"
+#include "threat.hpp"
 #include "scoreManager.hpp"
 #include "cleanup.hpp"
 
@@ -42,8 +42,11 @@ const int platformSpeed = 1;
 // Set the default attributes of the coin
 const int coinWidth = 24;
 const int coinHeight = 24;
-const int coinSpeed = 1;
 const int coinValue = 1;
+
+// Set the default attributes of the threat
+const int threatWidth = 24;
+const int threatHeight = 24;
 
 // Set the minimum and maximum velocity used in game
 const int minVelocity = 1;
@@ -57,6 +60,8 @@ extern const char* coinImagePath;
 extern const char* scoreBoxImagePath;
 extern const char* logoImagePath;
 extern const char* splashEggImagePath;
+extern const char* threatImagePath;
+extern const char* armedPlayerImagePath;
 
 // All the paths to the sound effects
 extern const char* fxLaunchPath;

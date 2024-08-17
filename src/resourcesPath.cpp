@@ -1,14 +1,15 @@
 #include "header/resourcesPath.hpp"
 
 // All the paths to the images
-const char* playerImagePath = "C:/Users/DELL/SDL2_GameProject/resources/armed_
-egg.png";
+const char* playerImagePath = "C:/Users/DELL/SDL2_GameProject/resources/egg.png";
 const char* lavaImagePath = "C:/Users/DELL/SDL2_GameProject/resources/lava.png";
 const char* platformImagePath = "C:/Users/DELL/SDL2_GameProject/resources/platform.png";
 const char* coinImagePath = "C:/Users/DELL/SDL2_GameProject/resources/coin.png";
 const char* scoreBoxImagePath = "C:/Users/DELL/SDL2_GameProject/resources/scoreBox.png";
 const char* logoImagePath = "C:/Users/DELL/SDL2_GameProject/resources/logo.png";
 const char* splashEggImagePath = "C:/Users/DELL/SDL2_GameProject/resources/splash_egg.png";
+const char* threatImagePath = "C:/Users/DELL/SDL2_GameProject/resources/fireball.png";
+const char* armedPlayerImagePath = "C:/Users/DELL/SDL2_GameProject/resources/armed_egg.png";
 
 // All the paths to the sound effects
 const char* fxLaunchPath = "C:/Users/DELL/SDL2_GameProject/resources/launch.wav";

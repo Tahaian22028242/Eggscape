@@ -1,9 +1,51 @@
-// #include "header/coin.hpp"
+#include "header/threat.hpp"
 
-// Coin::Coin(int index, Platform& platform)/* : platform(platform)*/ {
-//     width = coinWidth;
-//     height = coinHeight;
-//     isAvailable = true;
+Threat::Threat(int startX, int startY) {
+    x = startX;
+    y = startY;
+    width = threatWidth;
+    height = threatHeight;
+    riseSpeed = rand() % (maxVelocity - minVelocity) + minVelocity;
+    isAvailable = true;
+}
+
+int Threat::getX() {
+    return x;
+}
+
+int Threat::getY() {
+    return y;
+}
+
+int Threat::getWidth() {
+    return width;
+}
+
+int Threat::getHeight() {
+    return height;
+}
+
+void Threat::setIsAvailable(bool value) {
+    isAvailable = value;
+}
+
+bool Threat::getIsAvailable() {
+    return isAvailable;
+}
+
+void Threat::updatePosition() {
+    if (getIsAvailable() == false) {
+        return;
+    }
+    
+    y -= riseSpeed;
+
+    if (y < 0 - height) {
+        x = rand() % (screenWidth - width);
+        y = screenHeight;
+        riseSpeed = rand() % (maxVelocity - minVelocity) + minVelocity;
+    }
+}
     
 //     // if (Coin(index).getHasCoin()) {
 //     //     x = Coin(index).getCoinX();

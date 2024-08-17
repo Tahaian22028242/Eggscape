@@ -3,22 +3,26 @@
 Platform platforms[4] = {{0}, {1}, {2}, {3}};
 Player player(platforms[0].getX() + platforms[0].getWidth()/2 - 26/2, platforms[0].getY() - player.getHeight()/*, 26, 32*/);
 ScoreManager scoreManager = ScoreManager();
+Threat threat = Threat(screenWidth/2, screenHeight);
 
 bool hasBorder = false;
 // Used to play the coin sound effect only once.
 bool playCoinFX = false;
+bool playDeathFX = false;
 
 void resetGame() { // Used to reset the game, including the player's score, position and the platforms.
-    player.setBorderAvailable(hasBorder);
-    player.setLife(player.getLife());    
-    scoreManager.resetScore();
-    
     for (int i = 0; i < 4; i++)
         platforms[i] = Platform(i);
     
+    player.setBorderAvailable(hasBorder);
+    player.setLife(player.getLife()); 
     player.setVelocity(0, 0);
     player.setX(platforms[0].getX() + platforms[0].getWidth()/2 - 26/2);
     player.setY(platforms[0].getY() - player.getHeight());
+
+    scoreManager.resetScore();
+
+    threat.setIsAvailable(true);
 }
 
 // Game's base logic #1: Check if the egg collides with the platform and the coin.
@@ -52,6 +56,18 @@ void checkPlayerCollision() {
         }
     }
     player.setOnPlatform(onPlatform);
+
+    // Check if the egg collides with the threat.
+    if (player.getX() + player.getWidth() - 3 > threat.getX() && player.getX() + 3 < threat.getX() + threat.getWidth() && player.getY() + player.getHeight() - 3 > threat.getY() && player.getY() + 3 < threat.getY() + threat.getHeight()) {
+        playDeathFX = true;
+        threat.setIsAvailable(false);
+        // if (player.getLife() > 0) {
+        //     player.setLife(player.getLife() - 1);
+        // } else {
+        //     resetGame();
+        // }
+        resetGame();
+    }
 } // End of Game's base logic #1
 
 int main(int args, char* argv[]) {
@@ -85,6 +101,8 @@ int main(int args, char* argv[]) {
     SDL_Texture* scoreBoxSprite = loadTexture(scoreBoxImagePath, renderer);
     SDL_Texture* logo = loadTexture(logoImagePath, renderer);
     SDL_Texture* splashEggSprite = loadTexture(splashEggImagePath, renderer);
+    SDL_Texture* threatSprite = loadTexture(threatImagePath, renderer);
+    SDL_Texture* armedPlayerSprite = loadTexture(armedPlayerImagePath, renderer);
 
     Mix_Chunk* fxLaunch = loadSound(fxLaunchPath);
     Mix_Chunk* fxClick = loadSound(fxClickPath);
@@ -429,6 +447,11 @@ int main(int args, char* argv[]) {
                 Mix_PlayChannel(-1, fxCoin, 0);
                 playCoinFX = false;
             }
+
+            if (playDeathFX) {
+                Mix_PlayChannel(-1, fxDeath, 0);
+                playDeathFX = false;
+            }
   
             // Game's base logic #3: Using the mouse's press and release to control the egg's movement.
             if (mouse_pressed && player.isOnPlatform()) {
@@ -456,9 +479,10 @@ int main(int args, char* argv[]) {
         
             checkPlayerCollision();
             player.updatePosition();
+            threat.updatePosition();
             // Game's base logic #4: Check if the egg is out of bounds. 
             if (player.getY() > screenHeight) {
-                Mix_PlayChannel(-1, fxDeath, 0);
+                playDeathFX = true;
                 resetGame();
             }
 
@@ -495,7 +519,10 @@ int main(int args, char* argv[]) {
             
             renderSprite(playerSprite, renderer, player.getX(), player.getY(), 32, 32);
             renderSprite(lavaSprite, renderer, 0, lavaY, 800, 48);            
-            renderSprite(scoreBoxSprite, renderer, 17, 17, 102, 70);            
+            renderSprite(scoreBoxSprite, renderer, 17, 17, 102, 70);
+
+            if (threat.getIsAvailable())
+                renderSprite(threatSprite, renderer, threat.getX(), threat.getY(), 32, 32);            
             
             Draw_Font(renderer, scoreManager.getScore().c_str(), 28, 20, 75, 64, 64, {0, 0, 0});
             Draw_Font(renderer, scoreManager.getHighScoreString().c_str(), 17, 90, 74, 32, 32, {0, 0, 0});
@@ -512,6 +539,7 @@ int main(int args, char* argv[]) {
     cleanupTexture(scoreBoxSprite);
     cleanupTexture(logo);
     cleanupTexture(splashEggSprite);
+    cleanupTexture(threatSprite);
 
     cleanupSound(fxLaunch);
     cleanupSound(fxClick);
