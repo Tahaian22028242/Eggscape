@@ -1,7 +1,8 @@
 #include "header/resourcesPath.hpp"
 
 // All the paths to the images
-const char* playerImagePath = "C:/Users/DELL/SDL2_GameProject/resources/egg.png";
+const char* playerImagePath = "C:/Users/DELL/SDL2_GameProject/resources/armed_
+egg.png";
 const char* lavaImagePath = "C:/Users/DELL/SDL2_GameProject/resources/lava.png";
 const char* platformImagePath = "C:/Users/DELL/SDL2_GameProject/resources/platform.png";
 const char* coinImagePath = "C:/Users/DELL/SDL2_GameProject/resources/coin.png";

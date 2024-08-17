@@ -122,6 +122,7 @@ int main(int args, char* argv[]) {
     bool gamePaused = false;
     bool gameStarted = false;
     bool settingsScreen = false;
+    //bool tutorialScreen = false;
     
     bool mouse_down = false;
     int mouse_x, mouse_y;
@@ -139,11 +140,9 @@ int main(int args, char* argv[]) {
                 case SDL_MOUSEBUTTONDOWN: {
                     mouse_down = true;
                     mouse_pressed = true;
-                    //mouse_released = false;
                 } break;
                 case SDL_MOUSEBUTTONUP: {
                     mouse_down = false;
-                    //mouse_pressed = false;
                     mouse_released = true;
                 } break;
                 case SDL_KEYDOWN: {
@@ -163,27 +162,38 @@ int main(int args, char* argv[]) {
                 } break;
             }
         }
-
-        if (gamePaused) {
-            // TODO: Display a pause screen
-            // gameStarted = false;
-            // SDL_RenderClear(renderer);
-            Mix_PauseMusic(); // Pause the music
-            renderSprite(logo, renderer, screenWidth/2 - 200, screenHeight/2 - 45 - 30, 400, 90);
-            Draw_Font(renderer, scoreManager.getHighScoreString().c_str(), screenWidth/2 - 37, screenHeight/2 + 10, 74, 32, 32, {0, 0, 0});
-            Draw_Font(renderer, "Press 'P' to continue", screenWidth/2 - 134, screenHeight/2 + 50, 268, 32, 32, {178, 150, 125});
-            //SDL_RenderPresent(renderer);
-            continue;
-        } else {
-            // Resume the music
-            // gameStarted = true;
-            Mix_ResumeMusic();
-        }
-        
+      
         SDL_PumpEvents(); // Update the mouse state
         SDL_GetMouseState(&mouse_x, &mouse_y); // Get the mouse's position
         // TODO: Vsync instead
         SDL_Delay(12); // 60 FPS
+        
+        if (gamePaused) {
+            // TODO: Display a pause screen
+            // SDL_RenderClear(renderer);
+            Mix_PauseMusic(); // Pause the music
+            //renderSprite(logo, renderer, screenWidth/2 - 200, screenHeight/2 - 45 - 30, 400, 90);
+            Draw_Font(renderer, "PAUSED!", screenWidth/2 - 30, screenHeight/2 - 150/2, 60, 32, 64, {213, 128, 90});
+            Draw_Font(renderer, scoreManager.getHighScoreString().c_str(), screenWidth/2 - 37, screenHeight/2 + 10, 74, 32, 32, {0, 0, 0});
+            Draw_Font(renderer, "Press 'P' to continue", screenWidth/2 - 134, screenHeight/2 + 50, 268, 32, 32, {178, 150, 125});
+
+            Draw_Font(renderer, "Settings", screenWidth/2 - 30, screenHeight/2 + 100, 60, 32, 32, {178, 150, 125});
+            if (mouse_down &&
+                 mouse_x > screenWidth/2 - 30 && mouse_x < screenWidth/2 + 30 &&
+                 mouse_y > screenHeight/2 + 100 && mouse_y < screenHeight/2 + 132) {
+                Mix_PlayChannel(-1, fxSelect, 0);
+                settingsScreen = true;
+                gamePaused = false;
+                // mouseDownX = mouse_x;
+                // mouseDownY = mouse_y;
+            }
+            SDL_RenderPresent(renderer);
+            continue;
+        } else {
+            // Resume the music
+            Mix_ResumeMusic();
+        }
+  
         
         if (titleScreen) { // Display the title screen
             if (splashTimer < 120) { 
@@ -200,7 +210,6 @@ int main(int args, char* argv[]) {
                 Draw_Font(renderer, "JUMP FOR YOUR LIFE!", screenWidth/2 - 100, screenHeight/2 + 40, 200, 32, 32, {178, 150, 125});
                       
                 SDL_RenderPresent(renderer);
-                //cout << "Splash timer: " << splashTimer << endl;
                 
                 splashTimer += 1;
             }
@@ -231,9 +240,22 @@ int main(int args, char* argv[]) {
                 
                 renderSprite(logo, renderer, screenWidth/2 - 200, screenHeight/2 - 45 - 30, 400, 90);
                 Draw_Font(renderer, highscore, screenWidth/2 - 37, screenHeight/2 + 10, 74, 32, 32, {0, 0, 0});
-                //Draw_Font(renderer, "CLICK ANYWHERE TO BEGIN", screenWidth/2 - 134, screenHeight/2 + 50, 268, 32, 32, {178, 150, 125});
-                Draw_Font(renderer, "Start", screenWidth/2 - 20, screenHeight/2 + 100, 40, 32, 32, {178, 150, 125});
-                Draw_Font(renderer, "Settings", screenWidth/2 - 30, screenHeight/2 + 150, 60, 32, 32, {178, 150, 125});
+                
+                // Render start button
+                if (mouse_x > screenWidth/2 - 20 && mouse_x < screenWidth/2 + 20 &&
+                     mouse_y > screenHeight/2 + 100 && mouse_y < screenHeight/2 + 132)
+                    Draw_Font(renderer, "Start", screenWidth/2 - 20, screenHeight/2 + 100, 40, 32, 32, {0, 0, 0});
+                else
+                    Draw_Font(renderer, "Start", screenWidth/2 - 20, screenHeight/2 + 100, 40, 32, 32, {178, 150, 125});
+
+                // TODO: Implement the tutorial screen
+
+                // Render settings button
+                if (mouse_x > screenWidth/2 - 30 && mouse_x < screenWidth/2 + 30 &&
+                     mouse_y > screenHeight/2 + 150 && mouse_y < screenHeight/2 + 182)
+                    Draw_Font(renderer, "Settings", screenWidth/2 - 30, screenHeight/2 + 150, 60, 32, 32, {0, 0, 0});
+                else
+                    Draw_Font(renderer, "Settings", screenWidth/2 - 30, screenHeight/2 + 150, 60, 32, 32, {178, 150, 125});
 
                 SDL_RenderPresent(renderer);
                 
@@ -250,8 +272,6 @@ int main(int args, char* argv[]) {
                     Mix_PlayChannel(-1, fxSelect, 0);
                     titleScreen = false;
                     gameStarted = true;
-                    mouseDownX = mouse_x;
-                    mouseDownY = mouse_y;
                 }
 
                 if (mouse_pressed &&
@@ -260,8 +280,6 @@ int main(int args, char* argv[]) {
                     Mix_PlayChannel(-1, fxSelect, 0);
                     titleScreen = false;
                     settingsScreen = true;
-                    mouseDownX = mouse_x;
-                    mouseDownY = mouse_y;
                 }
             }            
         }
@@ -271,21 +289,42 @@ int main(int args, char* argv[]) {
             SDL_RenderClear(renderer);
         
             // Draw labels
-            Draw_Font(renderer, "SETTINGS", screenWidth/2 - 60, screenHeight/2 - 150, 120, 32, 64, {213, 128, 90});
+            Draw_Font(renderer, "SETTINGS", screenWidth/2 - 60, screenHeight/2 - 200, 120, 32, 64, {213, 128, 90});
 
-            Draw_Font(renderer, "Music:", screenWidth/2 - 100, screenHeight/2 - 100, 60, 32, 32, {178, 150, 125});
-            Draw_Font(renderer, "Sound:", screenWidth/2 - 100, screenHeight/2 - 50, 60, 32, 32, {178, 150, 125});
+            std::string musicChoosingTitle = "Choose Background Music:";
+            Draw_Font(renderer, musicChoosingTitle.c_str(), screenWidth/2 - 150 - 32, screenHeight/2 - 150, 
+                      musicChoosingTitle.length()*10, 32, 32, {178, 150, 125});
+
+            std::string currentMusic = randomMusic ? "Music 1" : "Music 2";
+            int musicNameLength = ((int)currentMusic.length()-1)*10;
+            Draw_Font(renderer, currentMusic.c_str(), screenWidth/2 + 110 + 32 + 8 - 32, screenHeight/2 - 150, 
+                      musicNameLength, 32, 32, {213, 128, 90});
+
+            // Draw left arrow
+            if (mouse_x > screenWidth/2 + 110 - 32 && mouse_x < screenWidth/2 + 110 &&
+                 mouse_y > screenHeight/2 - 150 && mouse_y < screenHeight/2 - 150 + 32)
+                Draw_Font(renderer, "<", screenWidth/2 + 110 - 32, screenHeight/2 - 150, 32, 32, 32, {213, 128, 90});
+            else 
+                Draw_Font(renderer, "<", screenWidth/2 + 110 - 32, screenHeight/2 - 150, 32, 32, 32, {178, 150, 125});
+
+            // Draw right arrow
+            if (mouse_x > screenWidth/2 + 210 + 8 - 32 && mouse_x < screenWidth/2 + 210 + 8 &&
+                 mouse_y > screenHeight/2 - 150 && mouse_y < screenHeight/2 - 150 + 32)
+                Draw_Font(renderer, ">", screenWidth/2 + 110 + 32 + 8 + musicNameLength + 8 - 32, screenHeight/2 - 150, 32, 32, 32, {213, 128, 90});
+            else 
+                Draw_Font(renderer, ">", screenWidth/2 + 110 + 32 + 8 + musicNameLength + 8 - 32, screenHeight/2 - 150, 32, 32, 32, {178, 150, 125});
+
+            // Calculate length of the rest titles(e.g. "Music Volume;" ~ 12*10 = 120) with the same way as the music choosing title(text length(-=1 if necessary) * 10). 
+
+            Draw_Font(renderer, "Music Volume:", screenWidth/2 - 150, screenHeight/2 - 100, 120, 32, 32, {178, 150, 125});
+            Draw_Font(renderer, "Sound Volume:", screenWidth/2 - 150, screenHeight/2 - 50, 120, 32, 32, {178, 150, 125});
 
             Draw_Font(renderer, "Border:", screenWidth/2 - 100, screenHeight/2, 60, 32, 32, {178, 150, 125});
             std::string borderStatus = hasBorder ? "ON!" : "Off!";
-            Draw_Font(renderer, borderStatus.c_str(), screenWidth/2 + 50, screenHeight/2, 20, 32, 32, {213, 128, 90});
-            if (mouse_pressed &&
-                 mouse_x > screenWidth/2 + 50 && mouse_x < screenWidth/2 + 70 &&
-                 mouse_y > screenHeight/2 && mouse_y < screenHeight/2 + 32) {
-                Mix_PlayChannel(-1, fxSelect, 0);
-                hasBorder = !hasBorder;
-                player.setBorderAvailable(hasBorder);
-            }
+            if (hasBorder)
+                Draw_Font(renderer, borderStatus.c_str(), screenWidth/2 + 50, screenHeight/2, (int)borderStatus.length()*8, 32, 32, {213, 128, 90});
+            else
+                Draw_Font(renderer, borderStatus.c_str(), screenWidth/2 + 50, screenHeight/2, (int)borderStatus.length()*8, 32, 32, {178, 150, 125});
 
             // bool keyConfigScreen = false;
             // Draw_Font(renderer, "Key Config", screenWidth/2 - 100, screenHeight/2 + 50, 60, 32, 32, {178, 150, 125}); 
@@ -299,8 +338,8 @@ int main(int args, char* argv[]) {
         
             // Draw volume lines
             SDL_SetRenderDrawColor(renderer, 178, 150, 125, 255);
-            SDL_RenderDrawLine(renderer, screenWidth/2 - 30, screenHeight/2 - 82, screenWidth/2 + 170, screenHeight/2 - 82);
-            SDL_RenderDrawLine(renderer, screenWidth/2 - 30, screenHeight/2 - 32, screenWidth/2 + 170, screenHeight/2 - 32);
+            SDL_RenderDrawLine(renderer, screenWidth/2 + 20, screenHeight/2 - 82, screenWidth/2 + 170, screenHeight/2 - 82);
+            SDL_RenderDrawLine(renderer, screenWidth/2 + 20, screenHeight/2 - 32, screenWidth/2 + 170, screenHeight/2 - 32);
         
             // Draw draggable rectangles
             SDL_Rect musicRect = {screenWidth/2 - 50 + (musicVolume * 200 / MIX_MAX_VOLUME), screenHeight/2 - 87, 10, 10};
@@ -311,8 +350,52 @@ int main(int args, char* argv[]) {
         
             SDL_RenderPresent(renderer);
         
-            // Handle volume adjustment
+            if (mouse_pressed) {
+                
+                // Handle music selection
+                if (((mouse_x > screenWidth/2 + 110 - 32 && mouse_x < screenWidth/2 + 110) &&
+                    (mouse_y > screenHeight/2 - 150 && mouse_y < screenHeight/2 - 150 + 32)) ||
+                    ((mouse_x > screenWidth/2 + 210 + 8 - 32 && mouse_x < screenWidth/2 + 210 + 8) && 
+                    (mouse_y > screenHeight/2 - 150 && mouse_y < screenHeight/2 - 150 + 32)))
+                {
+                    randomMusic = !randomMusic;
+                    if (randomMusic) {
+                        Mix_FreeMusic(backgroundMusic);
+                        backgroundMusic = loadMusic(music1Path);
+                    } else {
+                        Mix_FreeMusic(backgroundMusic);
+                        backgroundMusic = loadMusic(music2Path);
+                    }
+                    Mix_PlayMusic(backgroundMusic, -1);
+                }
+                
+                // Handle border selection
+                else if (mouse_x > screenWidth/2 + 50 && mouse_x < screenWidth/2 + 70 &&
+                    mouse_y > screenHeight/2 && mouse_y < screenHeight/2 + 32) 
+                {
+                    Mix_PlayChannel(-1, fxSelect, 0);
+                    hasBorder = !hasBorder;
+                    player.setBorderAvailable(hasBorder);
+                }
+
+                // Handle back button
+                else if (mouse_x > screenWidth/2 - 20 && mouse_x < screenWidth/2 + 20 &&
+                         mouse_y > screenHeight/2 + 100 && mouse_y < screenHeight/2 + 132) 
+                {
+                    Mix_PlayChannel(-1, fxSelect, 0);
+                    if (!gamePaused) {
+                        settingsScreen = false;
+                        titleScreen = true;
+                    } else {
+                        Mix_PlayChannel(-1, fxSelect, 0);
+                        settingsScreen = false;
+                        gamePaused = true;
+                    }
+                }
+            }
+
             if (mouse_down) {
+                // Handle volume adjustment
                 if (mouse_x > musicRect.x && mouse_x < musicRect.x + musicRect.w &&
                     mouse_y > musicRect.y && mouse_y < musicRect.y + musicRect.h) 
                 {
@@ -322,15 +405,6 @@ int main(int args, char* argv[]) {
                          mouse_y > soundRect.y && mouse_y < soundRect.y + soundRect.h)
                 {
                     draggingSound = true;
-                } 
-                else if (mouse_x > screenWidth/2 - 20 && mouse_x < screenWidth/2 + 20 &&
-                         mouse_y > screenHeight/2 + 100 && mouse_y < screenHeight/2 + 132) 
-                {
-                    Mix_PlayChannel(-1, fxSelect, 0);
-                    settingsScreen = false;
-                    titleScreen = true;
-                    mouseDownX = mouse_x;
-                    mouseDownY = mouse_y;
                 }
             } else {
                 draggingMusic = false;
