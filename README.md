@@ -19,7 +19,7 @@ Bước 2: Tải game
 Bước 3: Cài đặt game
 
 - Mở Visual Studio Code
-- Thiết lập C/C++ Configuration(Intellisense)
+- Thiết lập C/C++ Configuration(IntelliSense)
 - Các thư viện SDL cần thiết đã được thêm vào project(trong thư mục SDL2)
 - Thực hiện các chỉnh sửa về đường dẫn(nếu cần)
 
