@@ -11,10 +11,13 @@ private:
     int y;
     int width;
     int height;
-    int moveType; // 0 = not moving, 1 = moving
+    int moveType;
     int moveSpeed;
     bool isOnPlayer;
     bool isBorderAvailable;
+    float sineWaveFrequency;
+    float sineWaveAmplitude;
+    float sineWavePhase;
     
 public:
     Shield();
@@ -28,6 +31,7 @@ public:
     void setIsBorderAvailable(bool value);
     int getMoveType();
     void setMoveType(int value);
+    void setSineWaveParameters(float frequency, float amplitude, float phase);
     void updatePosition(Player &player);
 };
 #endif // SHIELD_HPP

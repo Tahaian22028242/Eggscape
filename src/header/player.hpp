@@ -18,11 +18,9 @@ private:
     Vector2 velocity;
     bool borderAvailable;
     int life;
-    bool isAlive;
-    bool isArmed;
     
 public:
-    Player(double x, double y/*, int width, int height*/);
+    Player(double x, double y);
     int getX();
     int getY();
     void setX(int x);
@@ -38,9 +36,5 @@ public:
     bool getBorderAvailable();
     void setLife(unsigned int value);
     unsigned int getLife();
-    void setIsAlive(bool value);
-    bool getIsAlive();
-    void setIsArmed(bool value);
-    bool getIsArmed();
 };
 #endif // PLAYER_HPP

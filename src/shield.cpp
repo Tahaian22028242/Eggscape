@@ -9,9 +9,14 @@ Shield::Shield() {
     if (delay == 100) {
         width = shieldWidth;
         height = shieldHeight;
-        x = rand() % (screenWidth - shieldWidth);
-        y = 0 - height;
         moveType = rand() % 4;
+        if (moveType != 3) { // standard move types
+            x = rand() % (screenWidth - width);
+            y = 0 - height;
+        } else { // horizontal sine wave move type
+            x = 0 - width;
+            y = rand() % (screenHeight - height);
+        }     
         moveSpeed = rand() % (maxVelocity - minVelocity) + minVelocity;
         isOnPlayer = false;
     }
@@ -57,26 +62,26 @@ void Shield::setIsBorderAvailable(bool value) {
     isBorderAvailable = value;
 }
 
+void Shield::setSineWaveParameters(float frequency, float amplitude, float phase) {
+    sineWaveFrequency = frequency;
+    sineWaveAmplitude = amplitude;
+    sineWavePhase = phase;
+}
+
 void Shield::updatePosition(Player &player) {
     if (getIsOnPlayer()) {
         x = player.getX();
         y = player.getY();
     } 
     else {
-        y += moveSpeed;
         if (y > screenHeight) {
-            // if (getIsBorderAvailable()) { // it will bounce up and down if there is a border
-            //     y = screenHeight - height;
-            //     moveSpeed = -moveSpeed;
-            // }
-            //else { // it will wrap around the screen if there is no border
-                y = 0 - height;
-                x = rand() % (screenWidth - width);
-            //}
+            y = 0 - height;
+            x = rand() % (screenWidth - width);
             setMoveType(rand() % 4);
         }
 
-        if (getMoveType() != 0) { // special move types
+        if (getMoveType() != 3) { // standard move types
+            y += moveSpeed; 
             if (getMoveType() == 1) { // move left
                 x -= moveSpeed;
                 if (getIsBorderAvailable()) {
@@ -86,7 +91,7 @@ void Shield::updatePosition(Player &player) {
                     }
                     else { // if there is no border, it will wrap around the screen
                         x = screenWidth - width;
-                    }
+                    }   
                 }
             } 
             else if (getMoveType() == 2) { // move right
@@ -100,32 +105,34 @@ void Shield::updatePosition(Player &player) {
                         x = 0;
                     }
                 }
-            } 
-            else { // move randomly
-                bool isLeft = rand() % 2;
-                if (isLeft) {
-                    x -= moveSpeed;
-                    if (getIsBorderAvailable()) {
-                        if (x < 0) { // if there is a border, it will bounce off the wall
-                            x = 0;
-                            moveType = 2;
-                        }
-                        else { // if there is no border, it will wrap around the screen
-                            x = screenWidth - width;
-                        }
-                    }
-                } 
-                else {
-                    x += moveSpeed;
-                    if (getIsBorderAvailable()) {
-                        if (x + width > screenWidth) { // if there is a border, it will bounce off the wall
-                            x = screenWidth - width;
-                            moveType = 1;
-                        }
-                        else { // if there is no border, it will wrap around the screen
-                            x = 0;
-                        }
-                    }
+            }
+        }
+            
+        else { // move sine wave cross the screen
+            setSineWaveParameters(0.1, rand() % 10, 0);
+            x += moveSpeed;
+            y = sineWaveAmplitude * std::sin(sineWaveFrequency * x + sineWavePhase) + screenHeight / 2; // Center the sine wave vertically
+
+            if (getIsBorderAvailable()) {
+                if (x < 0) { // if there is a border, it will bounce off the wall
+                    x = 0;
+                    moveSpeed = -moveSpeed;
+                    setMoveType(rand() % 4);
+                }
+                else if (x + width > screenWidth) { // if there is a border, it will bounce off the wall
+                    x = screenWidth - width;
+                    moveSpeed = -moveSpeed;
+                    setMoveType(rand() % 4);
+                }
+            }
+            else {
+                if (x < 0) { // if there is no border, it will wrap around the screen
+                    x = screenWidth - width;
+                    setMoveType(rand() % 4);
+                }
+                else if (x + width > screenWidth) { // if there is no border, it will wrap around the screen
+                    x = 0;
+                    setMoveType(rand() % 4);
                 }
             }
         }
