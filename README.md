@@ -146,7 +146,7 @@ Các file .dll phục vụ việc chạy main.exe
 - Bước đầu biết tự thiết kế hình ảnh(threat, plate...).
 
 Nhược điểm:
-- Tính đến thời điểm nộp bài, vẫn chưa kịp phát triển thêm được các tính năng đã dự định hoặc mong muốn(hiển thị mạng, thêm cửa hàng bán skin hoặc mở khoá đồ phụ trợ sử dụng xu kiếm được làm phương tiện trao đổi, thêm tuỳ chỉnh và chọn mức độ khó, thêm loại threat mới...).
+- Tính đến thời điểm nộp bài, vẫn chưa kịp phát triển thêm được các tính năng đã dự định hoặc mong muốn(hiển thị mạng, thêm hướng dẫn, thêm cửa hàng bán skin hoặc mở khoá đồ phụ trợ sử dụng xu kiếm được làm phương tiện trao đổi, thêm tuỳ chỉnh và chọn mức độ khó, thêm loại threat mới...).
 - File main.cpp còn tương đối to và hơi lộn xộn, cần phải chia ra thêm các file xử lý để gọn hơn.
 - Đồ hoạ nói chung còn sơ sài, chưa cuốn hút, background vẽ bằng SDL nên không hấp dẫn, chưa nhiều âm thanh đa dạng.g
 - ReadMe và video báo cáo demo chưa thật sự rõ ràng đầy đủ và lôi cuốn, trình bày còn thiếu sót, ngắc ngứ.
