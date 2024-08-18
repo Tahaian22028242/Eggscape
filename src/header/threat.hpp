@@ -20,8 +20,8 @@ public:
     Threat();
     int getX();
     int getY();
-    int setX(int x);
-    int setY(int y);
+    void setX(int x);
+    void setY(int y);
     int getWidth();
     int getHeight();
     void setIsAvailable(bool value);

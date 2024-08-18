@@ -25,11 +25,11 @@ int Threat::getY() {
     return y;
 }
 
-int Threat::setX(int value) {
+void Threat::setX(int value) {
     x = value;
 }
 
-int Threat::setY(int value) {
+void Threat::setY(int value) {
     y = value;
 }
 
