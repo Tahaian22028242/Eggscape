@@ -8,10 +8,10 @@ Platform::Platform(int index) {
     y = 0 - height - (index * 100);
 
     int coinInt = rand() % 4;
-    isMoving = rand() % 4;
+    moveType = rand() % 4;
 
     if (index == 0) {
-        isMoving = 0;
+        moveType = 0;
         coinInt = 0;
     }
     
@@ -57,24 +57,24 @@ int Platform::getCoinY() {
 }
 
 int Platform::getIsMoving() {
-    return isMoving;
+    return moveType;
 }
 
 void Platform::updatePosition() {
     y += platformSpeed;
 
-    if (isMoving != 0) {
-        if (isMoving == 1) {
+    if (moveType != 0) {
+        if (moveType == 1) {
             x -= platformSpeed;
             if (x < 0) {
                 x = 0;
-                isMoving = 2;
+                moveType = 2;
             }
-        } else if (isMoving == 2) {
+        } else if (moveType == 2) {
             x += platformSpeed;
             if (x + width > screenWidth) {
                 x = screenWidth - width;
-                isMoving = 1;
+                moveType = 1;
             }
         }
 

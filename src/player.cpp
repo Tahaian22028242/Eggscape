@@ -1,6 +1,6 @@
 #include "header/player.hpp"
 
-Player::Player(double x, double y/*, int width, int height*/) {
+Player::Player(double x, double y) {
     this->x = x;
     this->y = y;
     this->width = playerWidth;
@@ -8,6 +8,7 @@ Player::Player(double x, double y/*, int width, int height*/) {
     this->onPlatform = false;
     this->velocity = (Vector2){0, 0};
     this->life = playerMaxLife;
+    this->isAlive = true;
 }
 
 int Player::getX() {
@@ -66,8 +67,26 @@ bool Player::getBorderAvailable() {
     return borderAvailable;
 }
 
+void Player::setIsAlive(bool value) {
+    isAlive = value;
+}
+
+bool Player::getIsAlive() {
+    return isAlive;
+}
+
+void Player::setIsArmed(bool value) {
+    isArmed = value;
+}
+
+bool Player::getIsArmed() {
+    return isArmed;
+}
+
 // Game's base logic #2: Player's movement(the egg affected by gravity moves left and right).
 void Player::updatePosition() {
+    if (isAlive == false) return;
+
     x += velocity.x; 
     y += velocity.y;
     

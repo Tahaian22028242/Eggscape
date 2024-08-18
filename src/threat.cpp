@@ -6,6 +6,7 @@ Threat::Threat(int startX, int startY) {
     width = threatWidth;
     height = threatHeight;
     riseSpeed = rand() % (maxVelocity - minVelocity) + minVelocity;
+    moveType = rand() % 2;
     isAvailable = true;
 }
 
@@ -33,17 +34,38 @@ bool Threat::getIsAvailable() {
     return isAvailable;
 }
 
+void Threat::setMoveType(int type) {
+    moveType = type;
+}
+
+int Threat::getMoveType() {
+    return moveType;
+}
+
+void Threat::setSineWaveParameters(float frequency, float amplitude, float phase) {
+    sineWaveFrequency = frequency;
+    sineWaveAmplitude = amplitude;
+    sineWavePhase = phase;
+}
+
 void Threat::updatePosition() {
     if (getIsAvailable() == false) {
         return;
     }
     
-    y -= riseSpeed;
+    if (moveType == 0) { // normal movement
+        y -= riseSpeed;
+    } else if (moveType == 1) { // sine wave movement
+        y -= riseSpeed;
+        setSineWaveParameters(0.1, 10, 0);
+        x = x + sineWaveAmplitude * sin(sineWaveFrequency * y + sineWavePhase);
+    }
 
     if (y < 0 - height) {
         x = rand() % (screenWidth - width);
         y = screenHeight;
         riseSpeed = rand() % (maxVelocity - minVelocity) + minVelocity;
+        moveType = rand() % 2;
     }
 }
     
@@ -100,18 +122,18 @@ void Threat::updatePosition() {
 // void Coin::updatePosition() {
 //     y += coinSpeed;
 
-//     // if (isMoving != 0) {
-//     //     if (isMoving == 1) {
+//     // if (moveType != 0) {
+//     //     if (moveType == 1) {
 //     //         x-=CoinSpeed;
 //     //         if (x < 0) {
 //     //             x = 0;
-//     //             isMoving = 2;
+//     //             moveType = 2;
 //     //         }
-//     //     } else if (isMoving == 2) {
+//     //     } else if (moveType == 2) {
 //     //         x+=CoinSpeed;
 //     //         if (x + width > screenWidth) {
 //     //             x = screenWidth - width;
-//     //             isMoving = 1;
+//     //             moveType = 1;
 //     //         }
 //     //     } else {
 //     //         bool isLeft = rand() % 2;

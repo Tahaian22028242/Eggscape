@@ -4,6 +4,7 @@ Platform platforms[4] = {{0}, {1}, {2}, {3}};
 Player player(platforms[0].getX() + platforms[0].getWidth()/2 - 26/2, platforms[0].getY() - player.getHeight()/*, 26, 32*/);
 ScoreManager scoreManager = ScoreManager();
 Threat threat = Threat(screenWidth/2, screenHeight);
+Shield shield = Shield();
 
 bool hasBorder = false;
 // Used to play the coin sound effect only once.
@@ -19,10 +20,14 @@ void resetGame() { // Used to reset the game, including the player's score, posi
     player.setVelocity(0, 0);
     player.setX(platforms[0].getX() + platforms[0].getWidth()/2 - 26/2);
     player.setY(platforms[0].getY() - player.getHeight());
+    player.setIsAlive(true);
 
     scoreManager.resetScore();
 
     threat.setIsAvailable(true);
+    threat.setMoveType(rand() % 2);
+
+    shield.setIsOnPlayer(false);
 }
 
 // Game's base logic #1: Check if the egg collides with the platform and the coin.
@@ -57,15 +62,31 @@ void checkPlayerCollision() {
     }
     player.setOnPlatform(onPlatform);
 
+    // Check if the egg collides with the shield.
+    if (shield.getIsOnPlayer() == false && player.getX() + player.getWidth() - 3 > shield.getX() && player.getX() + 3 < shield.getX() + shield.getWidth() && player.getY() + player.getHeight() - 3 > shield.getY() && player.getY() + 3 < shield.getY() + shield.getHeight()) {
+        shield.setIsOnPlayer(true);
+        player.setIsArmed(true);
+    }
+
     // Check if the egg collides with the threat.
     if (player.getX() + player.getWidth() - 3 > threat.getX() && player.getX() + 3 < threat.getX() + threat.getWidth() && player.getY() + player.getHeight() - 3 > threat.getY() && player.getY() + 3 < threat.getY() + threat.getHeight()) {
         playDeathFX = true;
         threat.setIsAvailable(false);
-        // if (player.getLife() > 0) {
-        //     player.setLife(player.getLife() - 1);
-        // } else {
-        //     resetGame();
-        // }
+        if (shield.getIsOnPlayer()) {
+            shield.setIsOnPlayer(false);
+            player.setIsArmed(false);
+        } else {
+            if (player.getLife() > 0) {
+                player.setLife(player.getLife() - 1);
+            } else {
+                resetGame();
+            }
+        }
+    }
+
+    // Check if the egg collides with the lava.
+    if (player.getY() > screenHeight) {
+        playDeathFX = true;
         resetGame();
     }
 } // End of Game's base logic #1
@@ -102,7 +123,8 @@ int main(int args, char* argv[]) {
     SDL_Texture* logo = loadTexture(logoImagePath, renderer);
     SDL_Texture* splashEggSprite = loadTexture(splashEggImagePath, renderer);
     SDL_Texture* threatSprite = loadTexture(threatImagePath, renderer);
-    SDL_Texture* armedPlayerSprite = loadTexture(armedPlayerImagePath, renderer);
+    SDL_Texture* shieldSprite = loadTexture(shieldImagePath, renderer);
+    //SDL_Texture* armedPlayerSprite = loadTexture(armedPlayerImagePath, renderer);
 
     Mix_Chunk* fxLaunch = loadSound(fxLaunchPath);
     Mix_Chunk* fxClick = loadSound(fxClickPath);
@@ -394,6 +416,7 @@ int main(int args, char* argv[]) {
                     Mix_PlayChannel(-1, fxSelect, 0);
                     hasBorder = !hasBorder;
                     player.setBorderAvailable(hasBorder);
+                    shield.setIsBorderAvailable(hasBorder);
                 }
 
                 // Handle back button
@@ -479,12 +502,8 @@ int main(int args, char* argv[]) {
         
             checkPlayerCollision();
             player.updatePosition();
+            shield.updatePosition(player);
             threat.updatePosition();
-            // Game's base logic #4: Check if the egg is out of bounds. 
-            if (player.getY() > screenHeight) {
-                playDeathFX = true;
-                resetGame();
-            }
 
             for (int i = 0; i < 4; i++) {
                 platforms[i].updatePosition();
@@ -516,8 +535,10 @@ int main(int args, char* argv[]) {
                         platforms[i].getCoinX(), platforms[i].getCoinY(), coinWidth, coinHeight);
                 }
             }
-            
-            renderSprite(playerSprite, renderer, player.getX(), player.getY(), 32, 32);
+ 
+            renderSprite(playerSprite, renderer, player.getX(), player.getY(), player.getWidth(), player.getHeight());
+            renderSprite(shieldSprite, renderer, shield.getX(), shield.getY(), shield.getWidth(), shield.getHeight());
+
             renderSprite(lavaSprite, renderer, 0, lavaY, 800, 48);            
             renderSprite(scoreBoxSprite, renderer, 17, 17, 102, 70);
 

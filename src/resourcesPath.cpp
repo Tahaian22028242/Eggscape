@@ -9,6 +9,7 @@ const char* scoreBoxImagePath = "C:/Users/DELL/SDL2_GameProject/resources/scoreB
 const char* logoImagePath = "C:/Users/DELL/SDL2_GameProject/resources/logo.png";
 const char* splashEggImagePath = "C:/Users/DELL/SDL2_GameProject/resources/splash_egg.png";
 const char* threatImagePath = "C:/Users/DELL/SDL2_GameProject/resources/fireball.png";
+const char* shieldImagePath = "C:/Users/DELL/SDL2_GameProject/resources/splash_egg.png";
 const char* armedPlayerImagePath = "C:/Users/DELL/SDL2_GameProject/resources/armed_egg.png";
 
 // All the paths to the sound effects

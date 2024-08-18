@@ -11,11 +11,10 @@ private:
     int height;
     int riseSpeed;
     bool isAvailable;
-    // bool isOnPlatform;
-    // int velocityX;
-    // int velocityY;
-    // bool moveType; // 0 = not moving, 1 = moving
-    //Platform& platform;
+    int moveType; // 0 = normal, 1 = sine wave
+    float sineWaveFrequency;
+    float sineWaveAmplitude;
+    float sineWavePhase;
 
 public:
     Threat(int startX, int startY);
@@ -25,10 +24,9 @@ public:
     int getHeight();
     void setIsAvailable(bool value);
     bool getIsAvailable();
-    // bool getHasCoin();
-    // void setHasCoin(bool value);
-    // int getCoinX();
-    // int getCoinY();
+    void setMoveType(int type);
+    int getMoveType();
+    void setSineWaveParameters(float frequency, float amplitude, float phase);
     void updatePosition();
 };
 #endif // THREAT_HPP

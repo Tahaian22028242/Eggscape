@@ -20,6 +20,7 @@ using namespace std;
 #include "player.hpp"
 #include "platform.hpp"
 #include "threat.hpp"
+#include "shield.hpp"
 #include "scoreManager.hpp"
 #include "cleanup.hpp"
 
@@ -30,7 +31,7 @@ const double pi = 3.1415926535897;
 const int gravity = 1;
 
 // Set the default attributes of the player
-const int playerWidth = 26;
+const int playerWidth = 32;
 const int playerHeight = 32;
 const int playerMaxLife = 3;
 
@@ -48,9 +49,17 @@ const int coinValue = 1;
 const int threatWidth = 24;
 const int threatHeight = 24;
 
+// Set the default attributes of the shield
+const int shieldWidth = 32;
+const int shieldHeight = 32;
+
+// Set the default attributes of the armed player
+const int armedPlayerWidth = 34;
+const int armedPlayerHeight = 34;
+
 // Set the minimum and maximum velocity used in game
 const int minVelocity = 1;
-const int maxVelocity = 5;
+const int maxVelocity = 3;
 
 // All the paths to the images
 extern const char* playerImagePath;
@@ -61,6 +70,7 @@ extern const char* scoreBoxImagePath;
 extern const char* logoImagePath;
 extern const char* splashEggImagePath;
 extern const char* threatImagePath;
+extern const char* shieldImagePath;
 extern const char* armedPlayerImagePath;
 
 // All the paths to the sound effects
