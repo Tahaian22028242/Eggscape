@@ -10,9 +10,10 @@ bool hasBorder = false;
 bool playCoinFX = false;
 bool playDeathFX = false;
 bool gameOver = false;
+bool gameRestarted = false;
 
 void resetGame() { // Used to reset the game, including the player's score, position and the platforms.
-    if (gameOver == true) {
+    if (gameOver || gameRestarted) {
         scoreManager.resetScore();
         player.setLife(playerMaxLife);
     }
@@ -500,7 +501,7 @@ int main(int args, char* argv[]) {
         
             checkPlayerCollision();
 
-            // If game over, skip below code
+            // If game over or pause, skip below code
             if (!gameOver && !gamePaused) {
 
                 player.updatePosition();
@@ -594,22 +595,11 @@ int main(int args, char* argv[]) {
                     mouse_x > screenWidth/2 - 30 && mouse_x < screenWidth/2 + 30 &&
                     mouse_y > screenHeight/2 + 150 - 75 && mouse_y < screenHeight/2 + 182 - 75) {
                     Mix_PlayChannel(-1, fxSelect, 0);
+                    gameRestarted = true;
                     gamePaused = false;
                     resetGame();
                     gameStarted = true;
                 }
-
-                // Draw_Font(renderer, "Settings", screenWidth/2 - 30, screenHeight/2 + 100, 60, 32, 32, {178, 150, 125});
-                // if (mouse_down &&
-                //      mouse_x > screenWidth/2 - 30 && mouse_x < screenWidth/2 + 30 &&
-                //      mouse_y > screenHeight/2 + 100 && mouse_y < screenHeight/2 + 132) {
-                //     Mix_PlayChannel(-1, fxSelect, 0);
-                //     settingsScreen = true;
-                //     gamePaused = false;
-                //     // mouseDownX = mouse_x;
-                //     // mouseDownY = mouse_y;
-                // }
-                // SDL_RenderPresent(renderer);
                 continue;
             } else {
                 // Resume the music
@@ -657,8 +647,8 @@ int main(int args, char* argv[]) {
                  mouse_x > screenWidth/2 - 70/2 && mouse_x < screenWidth/2 + 70/2 &&
                  mouse_y > screenHeight/2 && mouse_y < screenHeight/2 + 32) {
                 Mix_PlayChannel(-1, fxSelect, 0);
-                gameOver = false;
                 resetGame();
+                gameOver = false;
                 gameStarted = true;
             }
 
