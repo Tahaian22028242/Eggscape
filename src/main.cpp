@@ -9,24 +9,27 @@ Shield shield = Shield();
 bool hasBorder = false;
 bool playCoinFX = false;
 bool playDeathFX = false;
+bool gameOver = false;
 
 void resetGame() { // Used to reset the game, including the player's score, position and the platforms.
-    for (int i = 0; i < 4; i++)
-        platforms[i] = Platform(i);
-
-    if (player.getLife() == 0) {
+    if (gameOver == true) {
         scoreManager.resetScore();
         player.setLife(playerMaxLife);
-    } else {
-        player.setBorderAvailable(hasBorder);
-        player.setVelocity(0, 0);
-        player.setX(platforms[0].getX() + platforms[0].getWidth()/2 - 26/2);
-        player.setY(platforms[0].getY() - player.getHeight());
     }
-
-    threat.setIsAvailable(true);
-
+    player.setLife(player.getLife());
+    for (int i = 0; i < 4; i++) {
+        platforms[i] = Platform(i);
+    }
+    player.setX(platforms[0].getX() + platforms[0].getWidth()/2 - 26/2);
+    player.setY(platforms[0].getY() - player.getHeight());
+    player.setVelocity(0, 0);
+    player.setOnPlatform(false);
     shield.setIsOnPlayer(false);
+    threat.setIsAvailable(false);
+    threat.setX(screenWidth - threat.getWidth());
+    threat.setY(screenHeight - threat.getHeight());
+    threat.setIsAvailable(true);
+    threat.setMoveType(rand() % 2);
 }
 
 // Game's base logic #1: Check if the egg collides with the platform and the coin.
@@ -73,20 +76,20 @@ void checkPlayerCollision() {
         player.getY() + player.getHeight() - 3 > threat.getY() && player.getY() + 3 < threat.getY() + threat.getHeight()) {
 
         playDeathFX = true;
-        threat.setIsAvailable(false);
-        threat.setX(threat.getX());
-        threat.setY(screenHeight - threat.getHeight());
-        threat.setIsAvailable(true);
-        threat.setMoveType(rand() % 2);
-        
+
         if (shield.getIsOnPlayer()) {
             shield.setIsOnPlayer(false);
         } else {
-            if (player.getLife() > 0) {
-                player.setLife(player.getLife() - 1);
+            player.setLife(player.getLife() - 1);
+            if (player.getLife() <= 0) {
+                gameOver = true;
             } else {
-                resetGame();
-            }
+                threat.setIsAvailable(false);
+                threat.setX(threat.getX());
+                threat.setY(screenHeight - threat.getHeight());
+                threat.setIsAvailable(true);
+                threat.setMoveType(rand() % 2);
+            }           
         }
     }
 
@@ -94,7 +97,13 @@ void checkPlayerCollision() {
     if (player.getY() > screenHeight) {
         playDeathFX = true;
         player.setLife(player.getLife() - 1);
+        if (player.getLife() <= 0) {
+            gameOver = true;
+        }  
         resetGame();
+        // player.setY(0 - player.getHeight());
+        // player.setX(platforms[0].getX() + platforms[0].getWidth()/2 - 26/2);
+        // player.setVelocity(0, 0);
     }
 } // End of Game's base logic #1
 
@@ -169,10 +178,15 @@ int main(int args, char* argv[]) {
     bool gamePaused = false;
     bool gameStarted = false;
     bool settingsScreen = false;
+    //bool toSettingsFromPause = false;
     //bool tutorialScreen = false;
     
     bool mouse_down = false;
     int mouse_x, mouse_y;
+
+    Uint32 lastToggleTime = 0; // Used to prevent the player from toggling the border too quickly
+    const Uint32 flickerInterval = 500; // Flicker interval in milliseconds
+    bool showRestartText = true;
     
     while (!quit) {
         SDL_Event event;
@@ -187,6 +201,23 @@ int main(int args, char* argv[]) {
                 case SDL_MOUSEBUTTONDOWN: {
                     mouse_down = true;
                     mouse_pressed = true;
+                    SDL_GetMouseState(&mouse_x, &mouse_y);
+                    if (settingsScreen) {
+                        // Handle "Back" button in settings screen
+                        if (mouse_x > screenWidth/2 - 30 && mouse_x < screenWidth/2 + 30 &&
+                            mouse_y > screenHeight/2 + 150 && mouse_y < screenHeight/2 + 182) {
+                            Mix_PlayChannel(-1, fxSelect, 0);
+                            settingsScreen = false;
+                            gamePaused = true;
+                        }
+                    } else if (gamePaused) {
+                        // Handle "Settings" button in pause screen
+                        if (mouse_x > screenWidth/2 - 30 && mouse_x < screenWidth/2 + 30 &&
+                            mouse_y > screenHeight/2 + 100 && mouse_y < screenHeight/2 + 132) {
+                            Mix_PlayChannel(-1, fxSelect, 0);
+                            settingsScreen = true;
+                        }
+                    }
                 } break;
                 case SDL_MOUSEBUTTONUP: {
                     mouse_down = false;
@@ -199,8 +230,11 @@ int main(int args, char* argv[]) {
                     else if (event.key.keysym.sym == SDLK_p) {
                         gamePaused = !gamePaused;
                     }
-                    else if (event.key.keysym.sym == SDLK_r) {
+                    else if (event.key.keysym.sym == SDLK_r && gameOver) {
+                        Mix_PlayChannel(-1, fxSelect, 0);
+                        gameOver = false;
                         resetGame();
+                        gameStarted = true;
                     }
                     else if (event.key.keysym.sym == SDLK_b) {
                         hasBorder = !hasBorder;
@@ -214,34 +248,7 @@ int main(int args, char* argv[]) {
         SDL_GetMouseState(&mouse_x, &mouse_y); // Get the mouse's position
         // TODO: Vsync instead
         SDL_Delay(12); // 60 FPS
-        
-        if (gamePaused) {
-            // TODO: Display a pause screen
-            // SDL_RenderClear(renderer);
-            Mix_PauseMusic(); // Pause the music
-            //renderSprite(logo, renderer, screenWidth/2 - 200, screenHeight/2 - 45 - 30, 400, 90);
-            Draw_Font(renderer, "PAUSED!", screenWidth/2 - 30, screenHeight/2 - 150/2, 60, 32, 64, {213, 128, 90});
-            Draw_Font(renderer, scoreManager.getHighScoreString().c_str(), screenWidth/2 - 37, screenHeight/2 + 10, 74, 32, 32, {0, 0, 0});
-            Draw_Font(renderer, "Press 'P' to continue", screenWidth/2 - 134, screenHeight/2 + 50, 268, 32, 32, {178, 150, 125});
-
-            Draw_Font(renderer, "Settings", screenWidth/2 - 30, screenHeight/2 + 100, 60, 32, 32, {178, 150, 125});
-            if (mouse_down &&
-                 mouse_x > screenWidth/2 - 30 && mouse_x < screenWidth/2 + 30 &&
-                 mouse_y > screenHeight/2 + 100 && mouse_y < screenHeight/2 + 132) {
-                Mix_PlayChannel(-1, fxSelect, 0);
-                settingsScreen = true;
-                gamePaused = false;
-                // mouseDownX = mouse_x;
-                // mouseDownY = mouse_y;
-            }
-            SDL_RenderPresent(renderer);
-            continue;
-        } else {
-            // Resume the music
-            Mix_ResumeMusic();
-        }
   
-        
         if (titleScreen) { // Display the title screen
             if (splashTimer < 120) { 
                 if (!playedSplash) { // Play the splash sound effect only once.
@@ -311,6 +318,7 @@ int main(int args, char* argv[]) {
                     Mix_PlayChannel(-1, fxSelect, 0);
                     titleScreen = false;
                     settingsScreen = true;
+                    // toSettingsFromPause = false;
                 }
             }            
         }
@@ -415,12 +423,11 @@ int main(int args, char* argv[]) {
                          mouse_y > screenHeight/2 + 100 && mouse_y < screenHeight/2 + 132) 
                 {
                     Mix_PlayChannel(-1, fxSelect, 0);
-                    if (!gamePaused) {
-                        settingsScreen = false;
+                    settingsScreen = false;
+                    // if (toSettingsFromPause == false) {
+                    if (gamePaused == false) {
                         titleScreen = true;
                     } else {
-                        Mix_PlayChannel(-1, fxSelect, 0);
-                        settingsScreen = false;
                         gamePaused = true;
                     }
                 }
@@ -492,54 +499,177 @@ int main(int args, char* argv[]) {
             } // End of Game's base logic #3
         
             checkPlayerCollision();
-            player.updatePosition();
-            shield.updatePosition(player);
-            threat.updatePosition();
 
-            for (int i = 0; i < 4; i++) {
-                platforms[i].updatePosition();
+            // If game over, skip below code
+            if (!gameOver && !gamePaused) {
+
+                player.updatePosition();
+                shield.updatePosition(player);
+                threat.updatePosition();
+
+                for (int i = 0; i < 4; i++) {
+                    platforms[i].updatePosition();
+                }
+                
+                lavaY = screenHeight - 43 - sin(timer) * 5;
+                timer += 0.05;
+            
+                SDL_SetRenderDrawColor(renderer, 0.933 * 255, 0.894 * 255, 0.882 * 255, 1.0 * 255);
+                SDL_RenderClear(renderer);
+                
+                if (mouse_down && player.isOnPlatform()) {
+                    SDL_SetRenderDrawColor(renderer, 178, 150, 125, 255);
+                    SDL_RenderDrawLine(
+                        renderer,
+                        mouseDownX + (player.getX() - mouseDownX) + (player.getWidth()/2),
+                        mouseDownY + (player.getY() - mouseDownY) + (player.getHeight()/2),
+                        mouse_x + (player.getX() - mouseDownX) + (player.getWidth()/2),
+                        mouse_y + (player.getY() - mouseDownY) + (player.getHeight()/2)
+                    );
+                }
+        
+                for (int i = 0; i < 4; i++) {
+                    renderSprite(platformSprite, renderer, 
+                        platforms[i].getX(), platforms[i].getY(), platforms[i].getWidth(), platforms[i].getHeight());
+                    
+                    if (platforms[i].getHasCoin()) {
+                        renderSprite(coinSprite, renderer, 
+                            platforms[i].getCoinX(), platforms[i].getCoinY(), coinWidth, coinHeight);
+                    }
+                }
+    
+                renderSprite(playerSprite, renderer, player.getX(), player.getY(), player.getWidth(), player.getHeight());
+                renderSprite(shieldSprite, renderer, shield.getX(), shield.getY(), shield.getWidth(), shield.getHeight());
+                renderSprite(lavaSprite, renderer, 0, lavaY, 800, 48);
+                if (threat.getIsAvailable())
+                    renderSprite(threatSprite, renderer, threat.getX(), threat.getY(), 32, 32);  
+
+                renderSprite(scoreBoxSprite, renderer, 17, 17, 103, 70);
+                Draw_Font(renderer, scoreManager.getScore().c_str(), 17 + (103 - 75)/2, 20, 75, 64, 64, {0, 0, 0});            
+                
+                Draw_Font(renderer, scoreManager.getHighScoreString().c_str(), 17, 90, 74, 32, 32, {0, 0, 0});
+                
+                SDL_RenderPresent(renderer);
             }
-            
-            lavaY = screenHeight - 43 - sin(timer) * 5;
-            timer += 0.05;
-            
+
+            if (gamePaused) {
+            // TODO: Display a pause screen
+            // SDL_RenderClear(renderer);
+                Mix_PauseMusic(); // Pause the music
+                // Draw logo to fit the space between Freezed! and scoreManager.getHighScoreString()
+                renderSprite(logo, renderer, screenWidth/2 - 200, screenHeight/2 - 45 - 30 - 75, 400, 90);
+                Draw_Font(renderer, "FREEZED!", screenWidth/2 - 35, screenHeight/2 - 150/2 - 125, 70, 32, 64, {213, 128, 90});
+                Draw_Font(renderer, scoreManager.getHighScoreString().c_str(), screenWidth/2 - 37, screenHeight/2 + 10 - 75, 74, 32, 32, {0, 0, 0});
+                Draw_Font(renderer, "Press 'P' to continue", screenWidth/2 - 134, screenHeight/2 + 50 - 75, 268, 32, 32, {178, 150, 125});
+
+                // Render settings button
+
+                if (mouse_x > screenWidth/2 - 30 && mouse_x < screenWidth/2 + 30 &&
+                    mouse_y > screenHeight/2 + 100 - 75 && mouse_y < screenHeight/2 + 132 - 75)
+                    Draw_Font(renderer, "Settings", screenWidth/2 - 30, screenHeight/2 + 100 - 75, 60, 32, 32, {0, 0, 0});
+                else
+                    Draw_Font(renderer, "Settings", screenWidth/2 - 30, screenHeight/2 + 100 - 75, 60, 32, 32, {178, 150, 125});
+
+                // Render restart button
+
+                if (mouse_x > screenWidth/2 - 30 && mouse_x < screenWidth/2 + 30 &&
+                    mouse_y > screenHeight/2 + 150 - 75 && mouse_y < screenHeight/2 + 182 - 75)
+                    Draw_Font(renderer, "Restart", screenWidth/2 - 30, screenHeight/2 + 150 - 75, 60, 32, 32, {0, 0, 0});
+                else
+                    Draw_Font(renderer, "Restart", screenWidth/2 - 30, screenHeight/2 + 150 - 75, 60, 32, 32, {178, 150, 125});
+
+                SDL_RenderPresent(renderer);
+
+                if (mouse_pressed &&
+                    mouse_x > screenWidth/2 - 30 && mouse_x < screenWidth/2 + 30 &&
+                    mouse_y > screenHeight/2 + 100 && mouse_y < screenHeight/2 + 132) {
+                    Mix_PlayChannel(-1, fxSelect, 0);
+                    //toSettingsFromPause = true;
+                    settingsScreen = true;
+                    gamePaused = false;
+                    gameStarted = false;
+                }
+
+                if (mouse_pressed &&
+                    mouse_x > screenWidth/2 - 30 && mouse_x < screenWidth/2 + 30 &&
+                    mouse_y > screenHeight/2 + 150 && mouse_y < screenHeight/2 + 182) {
+                    Mix_PlayChannel(-1, fxSelect, 0);
+                    gamePaused = false;
+                    resetGame();
+                    gameStarted = true;
+                }
+
+                // Draw_Font(renderer, "Settings", screenWidth/2 - 30, screenHeight/2 + 100, 60, 32, 32, {178, 150, 125});
+                // if (mouse_down &&
+                //      mouse_x > screenWidth/2 - 30 && mouse_x < screenWidth/2 + 30 &&
+                //      mouse_y > screenHeight/2 + 100 && mouse_y < screenHeight/2 + 132) {
+                //     Mix_PlayChannel(-1, fxSelect, 0);
+                //     settingsScreen = true;
+                //     gamePaused = false;
+                //     // mouseDownX = mouse_x;
+                //     // mouseDownY = mouse_y;
+                // }
+                // SDL_RenderPresent(renderer);
+                continue;
+            } else {
+                // Resume the music
+                Mix_ResumeMusic();
+            }
+        }
+
+        // Game Over screen
+        if (gameOver) {
+            gameStarted = false;
+            // Update flicker timer
+            Uint32 currentTime = SDL_GetTicks();
+            if (currentTime - lastToggleTime > flickerInterval) {
+                showRestartText = !showRestartText;
+                lastToggleTime = currentTime;
+            }
+
+            // Render the game over screen
             SDL_SetRenderDrawColor(renderer, 0.933 * 255, 0.894 * 255, 0.882 * 255, 1.0 * 255);
             SDL_RenderClear(renderer);
             
-            if (mouse_down && player.isOnPlatform()) {
-                SDL_SetRenderDrawColor(renderer, 178, 150, 125, 255);
-                SDL_RenderDrawLine(
-                    renderer,
-                    mouseDownX + (player.getX() - mouseDownX) + (player.getWidth()/2),
-                    mouseDownY + (player.getY() - mouseDownY) + (player.getHeight()/2),
-                    mouse_x + (player.getX() - mouseDownX) + (player.getWidth()/2),
-                    mouse_y + (player.getY() - mouseDownY) + (player.getHeight()/2)
-                );
-            }
-    
-            for (int i = 0; i < 4; i++) {
-                renderSprite(platformSprite, renderer, 
-                    platforms[i].getX(), platforms[i].getY(), platforms[i].getWidth(), platforms[i].getHeight());
-                
-                if (platforms[i].getHasCoin()) {
-                    renderSprite(coinSprite, renderer, 
-                        platforms[i].getCoinX(), platforms[i].getCoinY(), coinWidth, coinHeight);
-                }
-            }
- 
-            renderSprite(playerSprite, renderer, player.getX(), player.getY(), player.getWidth(), player.getHeight());
-            renderSprite(shieldSprite, renderer, shield.getX(), shield.getY(), shield.getWidth(), shield.getHeight());
+            Draw_Font(renderer, "GAME OVER!", screenWidth/2 - 100, screenHeight/2 - 150, 200, 32, 64, {213, 128, 90});
+            Draw_Font(renderer, scoreManager.getHighScoreString().c_str(), screenWidth/2 - 37, screenHeight/2 - 100, 74, 32, 32, {0, 0, 0});
 
-            renderSprite(lavaSprite, renderer, 0, lavaY, 800, 48);            
-            renderSprite(scoreBoxSprite, renderer, 17, 17, 102, 70);
-
-            if (threat.getIsAvailable())
-                renderSprite(threatSprite, renderer, threat.getX(), threat.getY(), 32, 32);            
+            if (showRestartText)
+                Draw_Font(renderer, "Press 'R' to restart", screenWidth/2 - 134, screenHeight/2 - 50, 268, 32, 32, {178, 150, 125});
             
-            Draw_Font(renderer, scoreManager.getScore().c_str(), 28, 20, 75, 64, 64, {0, 0, 0});
-            Draw_Font(renderer, scoreManager.getHighScoreString().c_str(), 17, 90, 74, 32, 32, {0, 0, 0});
+            if (mouse_x > screenWidth/2 - 70/2 && mouse_x < screenWidth/2 + 70/2 &&
+                 mouse_y > screenHeight/2 && mouse_y < screenHeight/2 + 32)
+                // Draw restart button with length 70 and center it
+                Draw_Font(renderer, "Restart", screenWidth/2 - 70/2, screenHeight/2, 70, 32, 32, {0, 0, 0});
+            else
+                Draw_Font(renderer, "Restart", screenWidth/2 - 70/2, screenHeight/2, 70, 32, 32, {178, 150, 125});
+
+            // Draw the home button
+            if (mouse_x > screenWidth/2 - 70/2 && mouse_x < screenWidth/2 + 70/2 &&
+                 mouse_y > screenHeight/2 + 50 && mouse_y < screenHeight/2 + 82)
+                Draw_Font(renderer, "Home", screenWidth/2 - 70/2, screenHeight/2 + 50, 70, 32, 32, {0, 0, 0});
+            else
+                Draw_Font(renderer, "Home", screenWidth/2 - 70/2, screenHeight/2 + 50, 70, 32, 32, {178, 150, 125});
             
             SDL_RenderPresent(renderer);
+            
+            if (mouse_pressed &&
+                 mouse_x > screenWidth/2 - 70/2 && mouse_x < screenWidth/2 + 70/2 &&
+                 mouse_y > screenHeight/2 && mouse_y < screenHeight/2 + 32) {
+                Mix_PlayChannel(-1, fxSelect, 0);
+                gameOver = false;
+                resetGame();
+                gameStarted = true;
+            }
+
+            if (mouse_pressed &&
+                 mouse_x > screenWidth/2 - 70/2 && mouse_x < screenWidth/2 + 70/2 &&
+                 mouse_y > screenHeight/2 + 50 && mouse_y < screenHeight/2 + 82) {
+                Mix_PlayChannel(-1, fxSelect, 0);
+                gameOver = false;
+                resetGame();
+                titleScreen = true;
+            }
         }
     }
 
