@@ -582,7 +582,7 @@ int main(int args, char* argv[]) {
 
                 if (mouse_pressed &&
                     mouse_x > screenWidth/2 - 30 && mouse_x < screenWidth/2 + 30 &&
-                    mouse_y > screenHeight/2 + 100 && mouse_y < screenHeight/2 + 132) {
+                    mouse_y > screenHeight/2 + 100 - 75 && mouse_y < screenHeight/2 + 132 - 75) {
                     Mix_PlayChannel(-1, fxSelect, 0);
                     //toSettingsFromPause = true;
                     settingsScreen = true;
@@ -592,7 +592,7 @@ int main(int args, char* argv[]) {
 
                 if (mouse_pressed &&
                     mouse_x > screenWidth/2 - 30 && mouse_x < screenWidth/2 + 30 &&
-                    mouse_y > screenHeight/2 + 150 && mouse_y < screenHeight/2 + 182) {
+                    mouse_y > screenHeight/2 + 150 - 75 && mouse_y < screenHeight/2 + 182 - 75) {
                     Mix_PlayChannel(-1, fxSelect, 0);
                     gamePaused = false;
                     resetGame();
