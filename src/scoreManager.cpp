@@ -6,17 +6,26 @@ ScoreManager::ScoreManager() : scoreInt(0), highscoreInt(loadHighScore()) {
 }
 
 int ScoreManager::loadHighScore() {
-    std::ifstream scorefile("bin/highscore.bin", std::ios::binary);
+    std::ifstream scorefile("highscore.bin", std::ios::binary);
     if (!scorefile) {
+        cout << "Error: Could not load high score" << endl;
         return 0;
     }
     int ret;
     scorefile.read(reinterpret_cast<char*>(&ret), sizeof(int));
+    if (scorefile.gcount() != sizeof(int)) {
+        cout << "Oh no: Could not load high score" << endl;
+        return 0;
+    }
     return ret;
 }
 
 void ScoreManager::saveHighScore() const {
-    std::ofstream scorefile("bin/highscore.bin", std::ios::binary);
+    std::ofstream scorefile("highscore.bin", std::ios::binary);
+    if (!scorefile) {
+        cout << "Error: Could not save high score" << endl;
+        return;
+    }
     scorefile.write(reinterpret_cast<const char*>(&highscoreInt), sizeof(int));
 }
 
