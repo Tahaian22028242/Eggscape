@@ -10,6 +10,8 @@ UET Advanced Programming Game Project in C++
 
 # Link video báo cáo + demo: https://drive.google.com/file/d/1CXJbhiCymGJsDoLBfEmC_GF2XW9IE4ul/view?usp=sharing
 
+# Mô tả game
+
 ## Tổng quan
 Game lấy bối cảnh một cuộc buổi nấu nướng, trong đó bạn sẽ vào vai... một quả trứng, thực phẩm chính của món ăn. Tuy nhiên, đây không phải là một quả trứng bình thường như bao quả trứng khác, nó quyết không cam chịu số phận bị nhấn chìm trong dầu nóng hay nước sôi để rồi phải lên đĩa, kết thúc cuộc đời một cách chóng vánh trong bụng các thực khách háu ăn. Với tư cách là một quả trứng đã kinh qua những thí nghiệm khoa học tối mật, giờ đây nó đã tiến hoá, có thể di chuyển, nhảy nhót như sinh vật sống. Nhưng vấn đề ở đây là trứng không thể tự định hướng hay kiểm soát sức bật của bản thân, và sứ mệnh của bạn là hãy điều khiển trứng, đưa ra những chỉ dẫn một cách nhanh chóng và chính xác nhất có thể để giúp nó thoát khỏi bàn tay tử thần, hướng đến một tương lai tươi sáng hơn.
 
@@ -18,7 +20,7 @@ Bước 1: Chuẩn bị nền tảng->Cài đặt Visual Studio Code.
 
 - Game này được tạo ra bằng phần mềm Visual Studio Code phiên bản 1.91. Link tải Visual Studio Code (cho các nền tảng khác nhau): https://code.visualstudio.com/Download
 
-* Nếu bạn sử dụng Visual Studio Code(VSC) để chạy các chương trình viết bằng C/C++, bạn cần cấu hình lại VSC theo các bước trong link sau: https://code.visualstudio.com/docs/cpp/config-mingw
+- Nếu bạn sử dụng Visual Studio Code(VSC) để chạy các chương trình viết bằng C/C++, bạn cần cấu hình lại VSC theo các bước trong link sau: https://code.visualstudio.com/docs/cpp/config-mingw
 
 Bước 2: Tải game
 
@@ -124,9 +126,9 @@ src: các file C/C++(.hpp trong header và .cpp tương ứng) để xây dựng
 
 highscore.bin: file nhị phân lưu điểm và tải điểm.
 
-main.exe: file .exe vận hành game.
-
-Các file .dll phục vụ việc chạy main.exe
+build:
+- main.exe: file .exe vận hành game.
+- Các file .dll phục vụ việc chạy main.exe
 
 # Nguồn tham khảo
 
@@ -136,24 +138,36 @@ Các file .dll phục vụ việc chạy main.exe
 
 - Sự tự tìm tòi nghiên cứu phát triển thêm và thiết kế thêm một số hình ảnh của bản thân sinh viên(chi tiết thầy có thể xem lịch sử commit ạ).
 
-# Tự đánh giá:
+# Tự đánh giá
 
-Ưu điểm:
+## Các tính năng mới và thành tựu đã đạt được so với game gốc
+= Tạo được thêm các giao diện mới: menu-home, tuỳ chọn skin, hướng dẫn tutorial, cài đặt settings, tạm dừng pause, thua cuộc game over.
+- Có thể chuyển đổi từ giao diện này sang giao diện khác một cách linh hoạt.
+- Thêm tính năng linh hoạt đổi skin ở giao diện skin, có thể thay đổi bất cứ lúc nào trong khi chơi game.
+- Thêm nhạc nền và tuỳ chọn nhạc nền trong cài đặt(chủ động chọn nhạc, tăng giảm âm lượng).
+- Thêm tính năng bật/tắt biên để xử lý va chạm khi nhảy cho người chơi, giúp người chơi có thêm phương án di chuyển và tiếp đất.
+- Thêm bệ(platform) di chuyển, đối tượng hỗ trợ khiên(shield) và mối đe doạ(threat) được sinh ngẫu nhiên và di chuyển trên màn hình theo quy luật ngẫu nhiên, giúp game thêm phần thú vị.
+- Thêm hệ thống sinh mạng và quản lý sinh mạng cho người chơi, giúp giảm bớt độ khó(có nhiều lần thử hơn).
+- Thêm chức năng tạm dừng, chơi lại, truy cập đến các tính năng khác tại phần tạm dừng.
+
+## Ưu điểm
 - Bước đầu biết sử dụng thư viện SDL để làm game.
 - Bước đầu biết chia file, tạo lớp, hàm, cấu trúc, mô đun hoá dự án, tuy còn sơ sài.
 - Có thể tư duy logic để chỉnh sửa game cho hợp lý, sử dụng được kĩ thuật debug cơ bản và fix được các bug, các lỗi từ phổ thông đến chuyên môn.
 - Phát triên được thêm một số tính năng quan trọng cho game.
 - Bước đầu biết tự thiết kế hình ảnh(threat, plate...).
 
-Nhược điểm:
+## Nhược điểm
 - Tính đến thời điểm nộp bài, vẫn chưa kịp phát triển thêm được các tính năng đã dự định hoặc mong muốn(hiển thị mạng, thêm hướng dẫn, thêm cửa hàng bán skin hoặc mở khoá đồ phụ trợ sử dụng xu kiếm được làm phương tiện trao đổi, thêm tuỳ chỉnh và chọn mức độ khó, thêm loại threat mới...).
+  - **Cập nhật: Đã có thêm các tính năng: hiển thị mạng, hướng dẫn, thay đổi skin.
 - File main.cpp còn tương đối to và hơi lộn xộn, cần phải chia ra thêm các file xử lý để gọn hơn.
 - Đồ hoạ nói chung còn sơ sài, chưa cuốn hút, background vẽ bằng SDL nên không hấp dẫn, chưa nhiều âm thanh đa dạng.g
 - ReadMe và video báo cáo demo chưa thật sự rõ ràng đầy đủ và lôi cuốn, trình bày còn thiếu sót, ngắc ngứ.
 
-# Tổng kết:
+# Tổng kết
 - Em xin gửi lời cảm ơn sâu sắc đến những kiến thức, kĩ năng mà thầy Lê Đức Trọng đã truyền dạy cho chúng em cùng sự đôn đốc, sát sao của thầy với bài tập lớn ạ.
 - Do kĩ năng của bản thân còn non kém và quỹ thời gian khá eo hẹp, nên còn nhiều điều em muốn làm thêm với dự án mà chưa thể làm được. Vì vậy, em kính mong thầy hết sức thông cảm và châm chước cho những thiếu sót còn tồn tại trong bài tập lớn của em ạ. Nếu có thể em rất mong thầy có thể nới thêm deadline để em có thể phát triển game hơn nữa ạ.
+  - **Cập nhật ReadMe: Game đã hoàn thiện hơn trước ạ.
 
 # Em xin chân thành cảm ơn thầy ạ!
 
