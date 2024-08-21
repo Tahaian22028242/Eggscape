@@ -124,8 +124,11 @@ int main(int args, char* argv[]) {
     int mouseDownX = 0;
     int mouseDownY = 0;
     
+    // Lava animation
     int lavaY = screenHeight - 32;
     double timer = 0; // Used to animate the lava.
+
+    // Splash screen
     double splashTimer = 0; // Used to display the splash screen for a few seconds.
     
     bool firstTime = true; // Used to prevent the egg from launching when the game starts.
@@ -141,7 +144,8 @@ int main(int args, char* argv[]) {
     SDL_Texture* splashEggSprite = loadTexture(splashEggImagePath, renderer);
     SDL_Texture* threatSprite = loadTexture(threatImagePath, renderer);
     SDL_Texture* shieldSprite = loadTexture(shieldImagePath, renderer);
-    //SDL_Texture* armedPlayerSprite = loadTexture(armedPlayerImagePath, renderer);
+    SDL_Texture* armedPlayerSprite = loadTexture(armedPlayerImagePath, renderer);
+    SDL_Texture* killerPlayerSprite = loadTexture(killerPlayerImagePath, renderer);
 
     Mix_Chunk* fxLaunch = loadSound(fxLaunchPath);
     Mix_Chunk* fxClick = loadSound(fxClickPath);
@@ -173,12 +177,19 @@ int main(int args, char* argv[]) {
 
     bool draggingMusic = false;
     bool draggingSound = false;
+    // Define the boundaries of the volume line
+    int volumeLineMinX = screenWidth / 2 + 20;
+    int volumeLineMaxX = screenWidth / 2 + 170;
     
     bool quit = false;
     bool titleScreen = true;
     bool gamePaused = false;
     bool gameStarted = false;
     bool settingsScreen = false;
+
+    bool chooseSkinScreen = false;
+    int skinChoice = 0; // Used to choose the skin of the player.
+
     //bool toSettingsFromPause = false;
     //bool tutorialScreen = false;
     
@@ -202,7 +213,6 @@ int main(int args, char* argv[]) {
                 case SDL_MOUSEBUTTONDOWN: {
                     mouse_down = true;
                     mouse_pressed = true;
-                    SDL_GetMouseState(&mouse_x, &mouse_y);
                     if (settingsScreen) {
                         // Handle "Back" button in settings screen
                         if (mouse_x > screenWidth/2 - 30 && mouse_x < screenWidth/2 + 30 &&
@@ -295,9 +305,16 @@ int main(int args, char* argv[]) {
                     Draw_Font(renderer, "Settings", screenWidth/2 - 30, screenHeight/2 + 150, 60, 32, 32, {0, 0, 0});
                 else
                     Draw_Font(renderer, "Settings", screenWidth/2 - 30, screenHeight/2 + 150, 60, 32, 32, {178, 150, 125});
+                
+                // Render choose skin button
+                if (mouse_x > screenWidth/2 - 30 && mouse_x < screenWidth/2 + 30 &&
+                     mouse_y > screenHeight/2 + 200 && mouse_y < screenHeight/2 + 232)
+                    Draw_Font(renderer, "Choose Skin", screenWidth/2 - 30, screenHeight/2 + 200, 60, 32, 32, {0, 0, 0});
+                else
+                    Draw_Font(renderer, "Choose Skin", screenWidth/2 - 30, screenHeight/2 + 200, 60, 32, 32, {178, 150, 125});
 
                 SDL_RenderPresent(renderer);
-                
+
                 // if (mouse_pressed) { /* This is the old code that checks if the mouse is pressed (anywhere) to start the game. */
                 //     Mix_PlayChannel(-1, fxSelect, 0);
                 //     titleScreen = false;
@@ -320,6 +337,14 @@ int main(int args, char* argv[]) {
                     titleScreen = false;
                     settingsScreen = true;
                     // toSettingsFromPause = false;
+                }
+
+                if (mouse_pressed &&
+                     mouse_x > screenWidth/2 - 30 && mouse_x < screenWidth/2 + 30 &&
+                     mouse_y > screenHeight/2 + 200 && mouse_y < screenHeight/2 + 232) {
+                    Mix_PlayChannel(-1, fxSelect, 0);
+                    titleScreen = false;
+                    chooseSkinScreen = true;
                 }
             }            
         }
@@ -378,8 +403,8 @@ int main(int args, char* argv[]) {
         
             // Draw volume lines
             SDL_SetRenderDrawColor(renderer, 178, 150, 125, 255);
-            SDL_RenderDrawLine(renderer, screenWidth/2 + 20, screenHeight/2 - 82, screenWidth/2 + 170, screenHeight/2 - 82);
-            SDL_RenderDrawLine(renderer, screenWidth/2 + 20, screenHeight/2 - 32, screenWidth/2 + 170, screenHeight/2 - 32);
+            SDL_RenderDrawLine(renderer, volumeLineMinX, screenHeight/2 - 82, volumeLineMaxX, screenHeight/2 - 82);
+            SDL_RenderDrawLine(renderer, volumeLineMinX, screenHeight/2 - 32, volumeLineMaxX, screenHeight/2 - 32);
         
             // Draw draggable rectangles
             SDL_Rect musicRect = {screenWidth/2 - 50 + (musicVolume * 200 / MIX_MAX_VOLUME), screenHeight/2 - 87, 10, 10};
@@ -427,9 +452,11 @@ int main(int args, char* argv[]) {
                     settingsScreen = false;
                     // if (toSettingsFromPause == false) {
                     if (gamePaused == false) {
-                        titleScreen = true;
-                    } else {
-                        gamePaused = true;
+                        if (gameStarted == false) {
+                            titleScreen = true;
+                        } else {
+                            gamePaused = true;
+                        }
                     }
                 }
             }
@@ -450,19 +477,86 @@ int main(int args, char* argv[]) {
                 draggingMusic = false;
                 draggingSound = false;
             }
-        
+
+            // Make the music rect movement only within the boundaries of the current volume bar
             if (draggingMusic) {
-                int new_x = std::min(std::max(mouse_x, screenWidth/2 - 50), screenWidth/2 + 150);
-                musicVolume = (new_x - (screenWidth/2 - 50)) * MIX_MAX_VOLUME / 200;
+                int new_x = std::min(std::max(mouse_x, volumeLineMinX), volumeLineMaxX); // Clamp the new x position
+                musicVolume = (new_x - (screenWidth/2 - 50)) * MIX_MAX_VOLUME / 200; // Calculate the new volume
                 Mix_VolumeMusic(musicVolume);
             }
 
+            // Make the sound rect movement only within the boundaries of the current volume bar
             if (draggingSound) {
-                int new_x = std::min(std::max(mouse_x, screenWidth/2 - 50), screenWidth/2 + 150);
+                int new_x = std::min(std::max(mouse_x, volumeLineMinX), volumeLineMaxX);
                 soundVolume = (new_x - (screenWidth/2 - 50)) * MIX_MAX_VOLUME / 200;
                 Mix_Volume(-1, soundVolume); // Set volume for all channels
             }
         }
+
+        if (chooseSkinScreen) {
+            SDL_SetRenderDrawColor(renderer, 0.933 * 255, 0.894 * 255, 0.882 * 255, 1.0 * 255);
+            SDL_RenderClear(renderer);
+        
+            // Draw labels
+            Draw_Font(renderer, "CHOOSE SKIN", screenWidth/2 - 70, screenHeight/2 - 200, 140, 32, 64, {213, 128, 90});
+
+            // Draw the player's skin image side by side, then draw the rectangle around them with colored border if the mouse is hovering over them.
+            SDL_Rect rect1 = {screenWidth/2 - 50, screenHeight/2 - 150, 32, 32};
+            renderSprite(playerSprite, renderer, rect1.x, rect1.y, rect1.w, rect1.h);
+            SDL_Rect rect2 = {screenWidth/2 + 50, screenHeight/2 - 150, 34, 34};
+            renderSprite(armedPlayerSprite, renderer, screenWidth/2 + 50, screenHeight/2 - 150, 34, 34);
+            SDL_Rect rect3 = {screenWidth/2 + 150, screenHeight/2 - 150, 34, 34};
+            renderSprite(killerPlayerSprite, renderer, screenWidth/2 + 150, screenHeight/2 - 150, 34, 34);
+            
+            SDL_SetRenderDrawColor(renderer, 213, 128, 90, 255); // Set the color to orange to draw the rectangle around the player's skin image. 
+            // Draw the rectangle around the player's skin image if the mouse is hovering over them.
+            if (mouse_x > screenWidth/2 - 50 && mouse_x < screenWidth/2 - 50 + 32 &&
+                mouse_y > screenHeight/2 - 150 && mouse_y < screenHeight/2 - 150 + 32) {
+                SDL_RenderDrawRect(renderer, &rect1);
+            } else if (mouse_x > screenWidth/2 + 50 && mouse_x < screenWidth/2 + 50 + 34 &&
+                       mouse_y > screenHeight/2 - 150 && mouse_y < screenHeight/2 - 150 + 34) {
+                SDL_RenderDrawRect(renderer, &rect2);
+            } else if (mouse_x > screenWidth/2 + 150 && mouse_x < screenWidth/2 + 150 + 34 &&
+                       mouse_y > screenHeight/2 - 150 && mouse_y < screenHeight/2 - 150 + 34) {
+                SDL_RenderDrawRect(renderer, &rect3);
+            }
+
+
+            // Draw the back button
+            if (mouse_x > screenWidth/2 - 20 && mouse_x < screenWidth/2 + 20 &&
+                mouse_y > screenHeight/2 + 100 && mouse_y < screenHeight/2 + 132)
+                Draw_Font(renderer, "Back", screenWidth/2 - 20, screenHeight/2 + 100, 40, 32, 32, {213, 128, 90});
+            else
+                Draw_Font(renderer, "Back", screenWidth/2 - 20, screenHeight/2 + 100, 40, 32, 32, {178, 150, 125});
+
+            SDL_RenderPresent(renderer);
+
+            // Handle skin choosing
+            if (mouse_down && mouse_x > screenWidth/2 - 50 && mouse_x < screenWidth/2 - 50 + 32 &&
+                mouse_y > screenHeight/2 - 150 && mouse_y < screenHeight/2 - 150 + 32) {
+                Mix_PlayChannel(-1, fxSelect, 0);
+                SDL_RenderDrawRect(renderer, &rect1);
+                skinChoice = 0;
+            } else if (mouse_down && mouse_x > screenWidth/2 + 50 && mouse_x < screenWidth/2 + 50 + 34 &&
+                       mouse_y > screenHeight/2 - 150 && mouse_y < screenHeight/2 - 150 + 34) {
+                Mix_PlayChannel(-1, fxSelect, 0);
+                SDL_RenderDrawRect(renderer, &rect2);
+            } else if (mouse_down && mouse_x > screenWidth/2 + 150 && mouse_x < screenWidth/2 + 150 + 34 &&
+                       mouse_y > screenHeight/2 - 150 && mouse_y < screenHeight/2 - 150 + 34) {
+                Mix_PlayChannel(-1, fxSelect, 0);
+                SDL_RenderDrawRect(renderer, &rect3);
+                skinChoice = 2;
+            }
+
+            // Handle back button
+            if (mouse_pressed && mouse_x > screenWidth/2 - 20 && mouse_x < screenWidth/2 + 20 &&
+                mouse_y > screenHeight/2 + 100 && mouse_y < screenHeight/2 + 132) {
+                Mix_PlayChannel(-1, fxSelect, 0);
+                chooseSkinScreen = false;
+                titleScreen = true;
+            }
+        }
+
 
         if (gameStarted) {
             if (playCoinFX) {
@@ -539,7 +633,13 @@ int main(int args, char* argv[]) {
                     }
                 }
     
-                renderSprite(playerSprite, renderer, player.getX(), player.getY(), player.getWidth(), player.getHeight());
+                if (skinChoice == 0) {
+                    renderSprite(playerSprite, renderer, player.getX(), player.getY(), player.getWidth(), player.getHeight());
+                } else if (skinChoice == 1) {
+                    renderSprite(armedPlayerSprite, renderer, player.getX(), player.getY(), player.getWidth(), player.getHeight());
+                } else if (skinChoice == 2) {
+                    renderSprite(killerPlayerSprite, renderer, player.getX(), player.getY(), player.getWidth(), player.getHeight());
+                }
                 renderSprite(shieldSprite, renderer, shield.getX(), shield.getY(), shield.getWidth(), shield.getHeight());
                 renderSprite(lavaSprite, renderer, 0, lavaY, 800, 48);
                 if (threat.getIsAvailable())
@@ -548,14 +648,19 @@ int main(int args, char* argv[]) {
                 renderSprite(scoreBoxSprite, renderer, 17, 17, 103, 70);
                 Draw_Font(renderer, scoreManager.getScore().c_str(), 17 + (103 - 75)/2, 20, 75, 64, 64, {0, 0, 0});            
                 
-                Draw_Font(renderer, scoreManager.getHighScoreString().c_str(), 17, 90, 74, 32, 32, {0, 0, 0});
-                
+                Draw_Font(renderer, scoreManager.getHighScoreString().c_str(), 17, 90, 80, 32, 32, {0, 0, 0});
+                // Draw the life bar under the high score
+                Draw_Font(renderer, "LIFE: ", 17, 120, 60, 32, 32, {0, 0, 0});
+                Draw_Font(renderer, to_string(player.getLife()).c_str(), 17 + 60, 120, 16, 32, 32, {0, 0, 0});
+                // for (int i = 0; i < player.getLife(); i++) {
+                //     renderSprite(shieldSprite, renderer, 17 + i * 32, 120, 32, 32);
+                // }
+
                 SDL_RenderPresent(renderer);
             }
 
-            if (gamePaused) {
             // TODO: Display a pause screen
-            // SDL_RenderClear(renderer);
+            if (gamePaused) {
                 Mix_PauseMusic(); // Pause the music
                 // Draw logo to fit the space between Freezed! and scoreManager.getHighScoreString()
                 renderSprite(logo, renderer, screenWidth/2 - 200, screenHeight/2 - 45 - 30 - 75, 400, 90);
@@ -564,7 +669,6 @@ int main(int args, char* argv[]) {
                 Draw_Font(renderer, "Press 'P' to continue", screenWidth/2 - 134, screenHeight/2 + 50 - 75, 268, 32, 32, {178, 150, 125});
 
                 // Render settings button
-
                 if (mouse_x > screenWidth/2 - 30 && mouse_x < screenWidth/2 + 30 &&
                     mouse_y > screenHeight/2 + 100 - 75 && mouse_y < screenHeight/2 + 132 - 75)
                     Draw_Font(renderer, "Settings", screenWidth/2 - 30, screenHeight/2 + 100 - 75, 60, 32, 32, {0, 0, 0});
@@ -621,7 +725,7 @@ int main(int args, char* argv[]) {
             SDL_SetRenderDrawColor(renderer, 0.933 * 255, 0.894 * 255, 0.882 * 255, 1.0 * 255);
             SDL_RenderClear(renderer);
             
-            Draw_Font(renderer, "GAME OVER!", screenWidth/2 - 100, screenHeight/2 - 150, 200, 32, 64, {213, 128, 90});
+            Draw_Font(renderer, "YOU HAVE BEEN COOKED!", screenWidth/2 - 200, screenHeight/2 - 150, 20*20, 32, 64, {213, 128, 90});
             Draw_Font(renderer, scoreManager.getHighScoreString().c_str(), screenWidth/2 - 37, screenHeight/2 - 100, 74, 32, 32, {0, 0, 0});
 
             if (showRestartText)

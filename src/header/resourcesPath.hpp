@@ -72,6 +72,7 @@ extern const char* splashEggImagePath;
 extern const char* threatImagePath;
 extern const char* shieldImagePath;
 extern const char* armedPlayerImagePath;
+extern const char* killerPlayerImagePath;
 
 // All the paths to the sound effects
 extern const char* fxLaunchPath;

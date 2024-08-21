@@ -17,7 +17,7 @@
                 "-lSDL2_ttf",
                 "-lSDL2_mixer",
                 "-o",
-                "${workspaceFolder}/main.exe"
+                "${workspaceFolder}/bin/main.exe"
             ],
             "options": {
                 "cwd": "C:/Users/DELL/ucrt64/bin"

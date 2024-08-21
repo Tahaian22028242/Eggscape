@@ -6,7 +6,7 @@ ScoreManager::ScoreManager() : scoreInt(0), highscoreInt(loadHighScore()) {
 }
 
 int ScoreManager::loadHighScore() {
-    std::ifstream scorefile("highscore.bin", std::ios::binary);
+    std::ifstream scorefile("bin/highscore.bin", std::ios::binary);
     if (!scorefile) {
         return 0;
     }
@@ -16,7 +16,7 @@ int ScoreManager::loadHighScore() {
 }
 
 void ScoreManager::saveHighScore() const {
-    std::ofstream scorefile("highscore.bin", std::ios::binary);
+    std::ofstream scorefile("bin/highscore.bin", std::ios::binary);
     scorefile.write(reinterpret_cast<const char*>(&highscoreInt), sizeof(int));
 }
 
