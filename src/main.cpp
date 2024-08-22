@@ -14,9 +14,10 @@ bool gameOver = false;
 bool gameRestarted = false;
 
 void resetGame() { // Used to reset the game, including the player's score, position and the platforms.
-    if (gameOver || gameRestarted) {
+    if (gameRestarted) {
         scoreManager.resetScore();
         player.setLife(playerMaxLife);
+        gameRestarted = false;
     }
     player.setLife(player.getLife());
     for (int i = 0; i < 4; i++) {
@@ -270,7 +271,7 @@ int main(int args, char* argv[]) {
                 SDL_RenderClear(renderer); 
                 
                 renderSprite(logo, renderer, screenWidth/2 - 200, screenHeight/2 - 45 - 30 - 100, 400, 90);
-                Draw_Font(renderer, highscore, screenWidth/2 - 37, screenHeight/2 + 10 - 100, 74, 32, 32, {0, 0, 0});
+                Draw_Font(renderer, highscore, screenWidth/2 - 37, screenHeight/2 + 10 - 100, 80, 32, 32, {0, 0, 0});
                 
                 // Render start button
                 SDL_Rect startButton = {screenWidth/2 - 25, screenHeight/2, 50, 32};
@@ -692,7 +693,7 @@ int main(int args, char* argv[]) {
                 // Draw logo to fit the space between Freezed! and scoreManager.getHighScoreString()
                 renderSprite(logo, renderer, screenWidth/2 - 200, screenHeight/2 - 45 - 30 - 75, 400, 90);
                 Draw_Font(renderer, "FREEZED!", screenWidth/2 - 35, screenHeight/2 - 150/2 - 125, 70, 32, 64, {213, 128, 90});
-                Draw_Font(renderer, scoreManager.getHighScoreString().c_str(), screenWidth/2 - 37, screenHeight/2 + 10 - 75, 74, 32, 32, {0, 0, 0});
+                Draw_Font(renderer, scoreManager.getHighScoreString().c_str(), screenWidth/2 - 37, screenHeight/2 + 10 - 75, 80, 32, 32, {0, 0, 0});
                 Draw_Font(renderer, "Press 'P' to continue", screenWidth/2 - 134, screenHeight/2 + 50 - 75, 268, 32, 32, {178, 150, 125});
 
                 // Render settings button
@@ -769,7 +770,7 @@ int main(int args, char* argv[]) {
             SDL_RenderClear(renderer);
             
             Draw_Font(renderer, "YOU HAVE BEEN COOKED!", screenWidth/2 - 200, screenHeight/2 - 150, 20*20, 32, 64, {213, 128, 90});
-            Draw_Font(renderer, scoreManager.getHighScoreString().c_str(), screenWidth/2 - 37, screenHeight/2 - 100, 74, 32, 32, {0, 0, 0});
+            Draw_Font(renderer, scoreManager.getHighScoreString().c_str(), screenWidth/2 - 37, screenHeight/2 - 100, 80, 32, 32, {0, 0, 0});
 
             if (showRestartText)
                 Draw_Font(renderer, "Press 'R' to restart", screenWidth/2 - 134, screenHeight/2 - 50, 268, 32, 32, {178, 150, 125});
@@ -794,6 +795,7 @@ int main(int args, char* argv[]) {
                  mouse_x > screenWidth/2 - 70/2 && mouse_x < screenWidth/2 + 70/2 &&
                  mouse_y > screenHeight/2 && mouse_y < screenHeight/2 + 32) {
                 Mix_PlayChannel(-1, fxSelect, 0);
+                gameRestarted = true;
                 resetGame();
                 gameOver = false;
                 gameStarted = true;
