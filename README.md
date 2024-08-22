@@ -8,7 +8,7 @@ UET Advanced Programming Game Project in C++
 
 - Lớp: K67-CA-CLC4
 
-# Link video báo cáo + demo: https://drive.google.com/file/d/1CXJbhiCymGJsDoLBfEmC_GF2XW9IE4ul/view?usp=sharing
+# Link video báo cáo + demo(cập nhật) : https://drive.google.com/file/d/1W4qh-LfiGqy95kAYm83etA7J-43QpaNF/view?usp=sharing
 
 # Mô tả game
 
@@ -171,19 +171,18 @@ demo_image: các hình ảnh demo game tương ứng.
 - Bước đầu biết sử dụng thư viện SDL để làm game.
 - Bước đầu biết chia file, tạo lớp, hàm, cấu trúc, mô đun hoá dự án, tuy còn sơ sài.
 - Có thể tư duy logic để chỉnh sửa game cho hợp lý, sử dụng được kĩ thuật debug cơ bản và fix được các bug, các lỗi từ phổ thông đến chuyên môn.
-- Phát triên được thêm một số tính năng quan trọng cho game.
+- Phát triển được thêm một số tính năng quan trọng cho game.
 - Bước đầu biết tự thiết kế hình ảnh(threat, plate...).
 
 ## Nhược điểm
-- Tính đến thời điểm nộp bài, vẫn chưa kịp phát triển thêm được các tính năng đã dự định hoặc mong muốn(hiển thị mạng, thêm hướng dẫn, thêm cửa hàng bán skin hoặc mở khoá đồ phụ trợ sử dụng xu kiếm được làm phương tiện trao đổi, thêm tuỳ chỉnh và chọn mức độ khó, thêm loại threat mới...).
-  - **Cập nhật: Đã có thêm các tính năng: hiển thị mạng, hướng dẫn, thay đổi skin.
+- Tính đến thời điểm nộp bài, vẫn chưa kịp phát triển thêm được các tính năng đã dự định hoặc mong muốn(thêm loại phụ trợ mới, thêm cửa hàng bán đồ phụ trợ sử dụng xu kiếm được làm phương tiện trao đổi, thêm tuỳ chỉnh và chọn mức độ khó, thêm loại threat mới...).
 - File main.cpp còn tương đối to và hơi lộn xộn, cần phải chia ra thêm các file xử lý để gọn hơn.
 - Đồ hoạ nói chung còn sơ sài, chưa cuốn hút, background vẽ bằng SDL nên không hấp dẫn, chưa nhiều âm thanh đa dạng.g
 - ReadMe và video báo cáo demo chưa thật sự rõ ràng đầy đủ và lôi cuốn, trình bày còn thiếu sót, ngắc ngứ.
 
 # Tổng kết
 - Em xin gửi lời cảm ơn sâu sắc đến những kiến thức, kĩ năng mà thầy Lê Đức Trọng đã truyền dạy cho chúng em cùng sự đôn đốc, sát sao của thầy với bài tập lớn ạ.
-- Do kĩ năng của bản thân còn non kém và quỹ thời gian khá eo hẹp, nên còn nhiều điều em muốn làm thêm với dự án mà chưa thể làm được. Vì vậy, em kính mong thầy hết sức thông cảm và châm chước cho những thiếu sót còn tồn tại trong bài tập lớn của em ạ. Nếu có thể em rất mong thầy có thể nới thêm deadline để em có thể phát triển game hơn nữa ạ.
+- Do kĩ năng của bản thân còn non kém và quỹ thời gian khá eo hẹp, nên còn những điều em muốn làm thêm với dự án mà chưa thể làm được. Vì vậy, em kính mong thầy hết sức thông cảm và châm chước cho những thiếu sót còn tồn tại trong bài tập lớn của em ạ. Nếu có thể em rất mong thầy có thể nới thêm deadline để em có thể phát triển game hơn nữa ạ.
   - **Cập nhật ReadMe: Game đã hoàn thiện hơn trước ạ.
 
 # Em xin chân thành cảm ơn thầy ạ!
