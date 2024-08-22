@@ -48,35 +48,45 @@ Bước 4: Chạy game-> chạy file main.cpp
 
 - Màn hình game sau khi buid và run thành công.
 
-![Screenshot 2024-08-18 225514](https://github.com/user-attachments/assets/cba04cd6-80fe-461e-885e-228b864aab66)
+![splash_screen_image](https://github.com/user-attachments/assets/307fb01e-2944-4725-9d8d-39bd1f64f88b)
 
-- Sau khi chờ một lúc(thời gian được cài đặt trong game), màn hình chính hiện lên, bao gồm nút Start để bắt đầu game và nút Settings để cài đặt game.
+- Sau khi chờ một lúc(thời gian được cài đặt trong game), màn hình chính hiện lên, bao gồm nút Start để bắt đầu game, nút Skins để đi đến giao diện tuỳ chọn skins, nút Tutorial để đi đến giao diện hướng dẫn chơi và nút Settings để cài đặt game.
 
-![Screenshot 2024-08-18 213940](https://github.com/user-attachments/assets/87f1198b-0885-4d1b-b8a0-6f2eaeb5089b)
+![menu_home_image](https://github.com/user-attachments/assets/88821248-1617-41e2-82ff-7f6520b2e9af)
 
 - Bấm chọn Settings, giao diện cài đặt hiện lên, bao gồm chọn nhạc nền(có sẵn 2 nhạc trong project), điều chỉnh âm lượng nhạc và âm thanh bằng thanh kéo(nhấn giữ chuột và kéo). Ngoài ra còn có tuỳ chỉnh Border: On(có biên trái phải), off(không có biên) và nút Back để trở lại giao diện trước đó.
 
-![Screenshot 2024-08-18 225602](https://github.com/user-attachments/assets/e440875b-cdbf-420c-8deb-985402033cf5)
+![settings1_image](https://github.com/user-attachments/assets/58adccfe-606b-498d-9570-91edf9f8fc7d)
 
-![Screenshot 2024-08-18 225708](https://github.com/user-attachments/assets/735e32cb-ca69-4c25-be30-4b9ab03ac28e)
+![settings2_image](https://github.com/user-attachments/assets/a9d784ad-69b0-42ad-b6f8-d456a50d835f)
 
-- Bấm chọn Start ở màn hình chính, màn hình game hiện lên gồm nhân vật chính là một quả trứng, các bệ đỡ để người chơi điều khiển quả trứng nhảy lên bằng chuột, các đối tượng khác như khiên, cầu lửa với các vai trò tương ứng(cụ thể hơn trong video báo cáo) xuất hiện và di chuyển ngẫu nhiên theo thuật toán đã được cài đặt trước. Ngoài ra còn có hộp điểm hiện điểm số hiện tại và điểm cao nhất hiện tại.
+- Bấm chọn Skins, giao diện skins hiện lên, hiển thị 3 skin đã được thiết kế sẵn, người chơi có thể chọn tuỳ thích, sau đó nhấn Back để quay lại giao diện menu/home.
 
-![Screenshot 2024-08-18 225837](https://github.com/user-attachments/assets/b97e5c62-3ea4-46d0-8a6b-c6afe4778c02)
+![default_skin_image](https://github.com/user-attachments/assets/a87d402f-6dd5-44fd-b63d-bb8877eecd24)
 
-![Screenshot 2024-08-18 225942](https://github.com/user-attachments/assets/039f588f-08f7-4a16-ac7f-7898b526433c)
+![armed_skin_image](https://github.com/user-attachments/assets/38976fdd-c375-46fe-9bef-2faa1afbcd4a)
 
-![Screenshot 2024-08-18 230032](https://github.com/user-attachments/assets/d394bdb0-144f-4349-bbf8-c427505f5d6c)
+![killer_skin_image](https://github.com/user-attachments/assets/82c6e109-9cd1-4086-b7fb-98cf02b59acb)
 
-![Screenshot 2024-08-18 230258](https://github.com/user-attachments/assets/d7fdebd4-3a65-4e29-862f-d0601114fa4b)
+- Bấm chọn Tutorial, giao diện hướng dẫn hiện lên, hiển thị hướng dẫn cụ thể, người chơi cần đọc kỹ để nắm rõ cách chơi.
 
-- Nhấn P để tạm dừng game nếu game đang chạy và tiếp tục nếu đang tạm dừng. Khi đó giao diện tạm dừng hiện lên, có các nút chỉ dẫn "Nhấn P để tiếp tục", nút Settings để chuyển đến cài đặt và restart để khởi động lại game nếu muốn.
+![tutorial_image](https://github.com/user-attachments/assets/bc589179-0f81-4469-a3ee-aaa1321a7bc6)
 
-![Screenshot 2024-08-18 230158](https://github.com/user-attachments/assets/866578f2-5e1f-4c09-a9cf-3fe9016c861c)
+- Bấm chọn Start ở màn hình chính, màn hình game hiện lên gồm nhân vật chính là một quả trứng, các bệ đỡ để người chơi điều khiển quả trứng nhảy lên bằng chuột, các đối tượng khác như khiên, cầu lửa với các vai trò tương ứng(cụ thể hơn trong video báo cáo) xuất hiện và di chuyển ngẫu nhiên theo thuật toán đã được cài đặt trước. Ngoài ra còn hiển thị hộp điểm hiện điểm số hiện tại, điểm cao nhất đã đạt được và số mạng hiện có của nhân vật.
 
-- Khi nhân vật chính hết sinh lực(do rơi xuống dung nham hoặc va chạm với cầu lửa với số lần bằng số mạng), màn hình hiển thị giao diện Game Over, bao gồm điểm cao nhất đạt được, nút chỉ dẫn "Nhấn R để tải lại game" nhấp nháy(người chơi có thể bấm nút R) hoặc click chọn restart để khởi động lại, nút Home để trở về màn hình chính ban đầu.
+![start_game_image](https://github.com/user-attachments/assets/0ab8cd6c-acda-435e-9d0c-9f356787bfd6)
 
-![Screenshot 2024-08-18 230055](https://github.com/user-attachments/assets/76e2e59a-dab6-4969-a452-fadf749c5f40)
+![aim_to_launch_image](https://github.com/user-attachments/assets/3c7fcece-5dfa-40dc-881a-f4c7af943d5e)
+
+![player_with_shield](https://github.com/user-attachments/assets/03d7ed69-381b-44e6-a938-e2876a0f84b3)
+
+- Nhấn P để tạm dừng game nếu game đang chạy và tiếp tục nếu đang tạm dừng. Khi đó giao diện tạm dừng hiện lên, có các nút chỉ dẫn "Nhấn P để tiếp tục", nút Settings để chuyển đến cài đặt , Restart để khởi động lại game nếu muốn và Home để về màn hình menu/home.
+
+![pause_game_image](https://github.com/user-attachments/assets/caa4c697-b049-4ee3-a610-cbba9f02a247)
+
+- Khi nhân vật chính hết sinh lực(do rơi xuống dung nham hoặc va chạm với cầu lửa với số lần bằng số mạng), màn hình hiển thị giao diện Game Over, bao gồm điểm cao nhất đạt được, nút chỉ dẫn "Nhấn R để tải lại game" nhấp nháy(người chơi có thể bấm nút R) hoặc click chọn Restart để bắt đầu ván mới, Home để trở về màn hình menu/home.
+
+![game_over_image](https://github.com/user-attachments/assets/e50f8145-653c-4adc-8301-8dac63c42800)
 
 - Người chơi cũng có thể nhấn nút Esc trên bàn phím để thoát game nhanh hơn.
   
@@ -89,8 +99,13 @@ resources: các tài nguyên dùng trong game, gồm các hình ảnh, icon, âm
 - Nhân vật chính: một quả trứng.
   ![egg](https://github.com/user-attachments/assets/5ca54b34-b56e-49e6-9906-dfe5efb98a41)
 
+- Các skin khác của nhân vật chính.
+  ![armed_egg](https://github.com/user-attachments/assets/1128e0c3-7494-493b-a0d2-f714e0a1ff6c)
+  ![killer_egg](https://github.com/user-attachments/assets/c15e664d-9908-400f-a36d-2b9de789c06e)
+  
 - Nền: bệ đỡ cho trứng đặt chân và leo lên(bằng cách nhảy), di chuyển theo quy luật ngẫu nhiên và sẽ trôi dần xuống dầu nóng(dung nham).
   ![platform](https://github.com/user-attachments/assets/c9150d42-1ffa-4e90-b215-c260ddfbec3e)
+  ![plate](https://github.com/user-attachments/assets/17417145-fb52-45e0-9c1f-b76ce101c187) (chưa dùng)
 
 - Xu: dùng để tăng điểm khi va chạm với trứng.
   ![coin](https://github.com/user-attachments/assets/5dc08e54-969c-4449-86d1-aea25a4c6fb3)
@@ -129,6 +144,8 @@ highscore.bin: file nhị phân lưu điểm và tải điểm.
 build:
 - main.exe: file .exe vận hành game.
 - Các file .dll phục vụ việc chạy main.exe
+
+demo_image: các hình ảnh demo game tương ứng.
 
 # Nguồn tham khảo
 
