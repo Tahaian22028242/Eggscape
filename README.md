@@ -92,7 +92,11 @@ Bước 4: Chạy game-> chạy file main.cpp
   
 # Source code
 
+- Cấu trúc dự án:
+  ![project_structure](https://github.com/user-attachments/assets/f30f9d6f-d0a4-4d79-a919-c07698dd844f)
+
 .vscode: các file cần thiết để config Visual Studio Code để chạy được game.
+  ![vscode_files](https://github.com/user-attachments/assets/d83d57c3-20c1-4ef4-8cf0-6585b1bb841f)
 
 resources: các tài nguyên dùng trong game, gồm các hình ảnh, icon, âm thanh và phông chữ
   
@@ -119,11 +123,13 @@ resources: các tài nguyên dùng trong game, gồm các hình ảnh, icon, âm
 - Hộp điểm: chứa điểm được viết bằng text.
   ![scorebox](https://github.com/user-attachments/assets/0fec9f35-242d-4678-89e2-58ec1ec842e6)
 
-Cùng các hình ảnh khác có thể sử dụng nếu muốn.
+- Logo game: biểu tượng đại diện của game.
+  ![logo](https://github.com/user-attachments/assets/8af29c92-608e-4acd-b9d1-e350e8fcd177)
 
 - Các file âm thanh .wav dùng cho việc tạo âm thanh tương ứng trong game.
 - 2 nhạc nền có sẵn(tên chuẩn).
 - Font chữ hiện có: font.otf
+  ![font_sound_music](https://github.com/user-attachments/assets/af0f83d7-2231-400c-961f-0526e5a44d2e)
 
 SDL2: tài nguyên SDL thiết yếu cần để làm game.
 
