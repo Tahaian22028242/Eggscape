@@ -10,7 +10,7 @@ UET Advanced Programming Game Project in C++
 
 - Lớp học phần: 2324H_INT2215_70
 
-# Link video báo cáo + demo(cập nhật) : https://drive.google.com/file/d/1W4qh-LfiGqy95kAYm83etA7J-43QpaNF/view?usp=sharing
+# Video báo cáo + demo(cập nhật) : xem tại [đây](https://drive.google.com/file/d/1W4qh-LfiGqy95kAYm83etA7J-43QpaNF/view?usp=sharing)
 
 # Mô tả game
 
